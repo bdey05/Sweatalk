@@ -1,0 +1,1 @@
+A social media web application for fitness enthusiasts built with Flask + ReactJS w/ Typescript
