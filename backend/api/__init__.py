@@ -2,17 +2,21 @@ from flask import Flask
 from config import Config, ConfigDevelopment, ConfigProduction 
 from flask_sqlalchemy import SQLAlchemy
 
-#db = SQLAlchemy()
+db = SQLAlchemy()
 
 
 def create_app(config_class=ConfigDevelopment):
     app = Flask(__name__)
     app.config.from_object(config_class)
 
-    #db.init_app(app)
+    db.init_app(app)
 
-    #with app.app_context():
-        #db.create_all()
+    with app.app_context():
+        try:
+            db.create_all()
+            print("Success")
+        except:
+            print("Error")
     
     from api.auth import bp as authbp
     app.register_blueprint(authbp)
