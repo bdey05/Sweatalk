@@ -16,4 +16,4 @@ def register():
 
 @bp.route('/login')
 def login():
-    return ({'name': 'Bob'})
+    return ({'name': 'Bob', 'age': 47})

@@ -2,14 +2,18 @@ from flask import Flask
 from config import Config, ConfigDevelopment, ConfigProduction 
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
+from flask_cors import CORS
+
 
 db = SQLAlchemy()
 bcrypt = Bcrypt()
+
 
 from api.models.usermodel import AppUser 
 
 def create_app(config_class=ConfigDevelopment):
     app = Flask(__name__)
+    CORS(app)
     
     app.config.from_object(config_class)
 
