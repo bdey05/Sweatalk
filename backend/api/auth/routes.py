@@ -16,4 +16,4 @@ def register():
 
 @bp.route('/login')
 def login():
-    return ('<h2>Login Page</h2>')
+    return ({'name': 'Bob'})
