@@ -1,0 +1,64 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 45% 98%;
+    --foreground: 348 50% 4%;
+    --card: 0 45% 98%;
+    --card-foreground: 348 50% 4%;
+    --popover: 0 45% 98%;
+    --popover-foreground: 348 50% 4%;
+    --primary: 352 49% 53%;
+    --primary-foreground: 0 45% 98%;
+    --secondary: 106 49% 73%;
+    --secondary-foreground: 348 50% 4%;
+    --muted: 0 45% 20%;
+    --muted-foreground: 348 50% 70%;
+    --accent: 146 49% 61%;
+    --accent-foreground: 348 50% 4%;
+    --destructive: 0 85% 60%;
+    --destructive-foreground: 348 50% 4%;
+    --border: 0 45% 20%;
+    --input: 0 45% 20%;
+    --ring: 146 49% 40%;
+    --radius: 0.5rem;
+  }
+ 
+  .dark {
+    --background: 0 40% 2%;
+    --foreground: 348 50% 96%;
+    --card: 0 40% 2%;
+    --card-foreground: 348 50% 96%;
+    --popover: 0 40% 2%;
+    --popover-foreground: 348 50% 96%;
+    --primary: 352 49% 47%;
+    --primary-foreground: 348 50% 96%;
+    --secondary: 106 49% 27%;
+    --secondary-foreground: 348 50% 96%;
+    --muted: 0 39% 80%;
+    --muted-foreground: 348 50% 96%;
+    --accent: 146 49% 39%;
+    --accent-foreground: 0 40% 2%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 348 49% 10%;
+    --border: 0 40% 60%;
+    --input: 0 39% 80%;
+    --ring: 146 49% 60%;
+  }
+}
+
+@layer base {
+  html {
+    font-family: 'Poppins', sans-serif;
+  }
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
