@@ -12,4 +12,4 @@ ENV FLASK_DEBUG=1
 
 EXPOSE 5000 
 
-CMD ["python", "-m", "flask", "--app", "api", "run", "--host=0.0.0.0"]
+CMD ["python", "-m", "flask", "--app", "api", "run", "--host=0.0.0.0", "--reload"]

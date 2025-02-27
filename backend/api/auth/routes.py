@@ -5,6 +5,8 @@ from api import db
 
 @bp.route('/register')
 def register():
+    db.session.query(AppUser).delete()
+    db.session.commit()
     newUser1 = AppUser(username="TestUser1", email="testuser1@gmail.com")
     newUser1.set_password("test123")
     newUser2 = AppUser(username="TestUser2", email="testuser2@gmail.com")
@@ -16,4 +18,4 @@ def register():
 
 @bp.route('/login')
 def login():
-    return ({'name': 'Bob', 'age': 47})
+    return ({'name': 'Bob', 'age': 47, 'height': 181})
