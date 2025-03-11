@@ -1,5 +1,5 @@
 from api import db, bcrypt
-from sqlalchemy import Date, DateTime, Float, Integer, String
+from sqlalchemy import Date, DateTime, Float, Integer, String, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, validates
 from sqlalchemy.exc import SQLAlchemyError
 import datetime 
@@ -10,6 +10,8 @@ class AppUser(db.Model):
     username: Mapped[String] = mapped_column(String(30), unique=True, nullable=False) 
     email: Mapped[String] = mapped_column(String(100), unique=True, nullable=False)
     password_hash: Mapped[String] = mapped_column(String(256), nullable=False)
+    profile_complete: Mapped[Boolean] = mapped_column(Boolean, default=False)
+
 
     @validates('email')
     def validate_email(self, key, emailaddress):

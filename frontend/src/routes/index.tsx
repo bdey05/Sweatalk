@@ -33,7 +33,7 @@ function Index() {
       }, []);*/
 
   return (
-    <div>
+    <div className="min-h-screen flex flex-col">
       <header className="w-full px-5 md:px-10 py-4">
         <nav className="flex flex-col md:flex-row items-center justify-between h-auto md:h-14">
           <Link to="/" className="text-3xl md:text-4xl font-bold text-primary">
