@@ -4,50 +4,17 @@ import { Dumbbell, Utensils, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import landing from "../assets/landing.svg";
 
-import { ModeToggle } from "@/components/mode-toggle";
+import Navbar from "@/components/ui/navbar";
 
 export const Route = createFileRoute("/")({
   component: Index,
 });
 
 function Index() {
-  /*const [data, setData] = useState("");
-  const [err, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-        const getData = async () => {
-          try {
-            const res = await fetch("http://localhost:5000/login");
-            if (!res.ok) {
-              throw new Error(`Response status: ${res.status}`);
-            }
-            const json = await res.json();
-            setData(json);
-          } catch (e) {
-            setError(e);
-          }
-        };
-        getData();
-        <h2>{data.name} is {data.age}</h2>
-          {err && <p>{err}</p>}
-      }, []);*/
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="w-full px-5 md:px-10 py-4">
-        <nav className="flex flex-col md:flex-row items-center justify-between h-auto md:h-14">
-          <Link to="/" className="text-3xl md:text-4xl font-bold text-primary">
-            Sweatalk
-          </Link>
-          <div className="flex items-center gap-3 md:gap-5 mt-3 md:mt-0">
-            <Button variant="secondary" className="text-base md:text-lg">
-              <Link to="/login">Login</Link>
-            </Button>
-            <ModeToggle />
-          </div>
-        </nav>
-      </header>
-
+      <Navbar />
       <div className="w-full mx-5 my-3 px-12 py-5 flex flex-col gap-12 md:flex-row items-center justify-center">
         <div className="text-center md:text-left md:w-1/2">
           <h1 className="font-bold text-5xl m-5">
