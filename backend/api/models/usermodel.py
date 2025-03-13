@@ -10,7 +10,7 @@ class AppUser(db.Model):
     username: Mapped[String] = mapped_column(String(30), unique=True, nullable=False) 
     email: Mapped[String] = mapped_column(String(100), unique=True, nullable=False)
     password_hash: Mapped[String] = mapped_column(String(256), nullable=False)
-    profile_complete: Mapped[Boolean] = mapped_column(Boolean, default=False)
+    profile_complete: Mapped[Boolean] = mapped_column(Boolean, default=False, nullable=False)
 
 
     @validates('email')

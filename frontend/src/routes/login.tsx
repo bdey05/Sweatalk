@@ -4,13 +4,35 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import Navbar from "@/components/ui/navbar"
+import { useState } from 'react'
 
 
 export const Route = createFileRoute('/login')({
-  component: RouteComponent,
+  component: Login,
 })
 
-function RouteComponent() {
+function Login() {
+  const [responseMsg, setResponseMsg] = useState("");
+
+  const handleLogin = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/login", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Basic ' + btoa("TestUser" + ':' + "pafssword")
+        }
+      });
+      if (!res.ok) {
+        throw new Error(`Response status: ${res.status}`);
+      }
+      const data = await res.json();
+      setResponseMsg(data["token"]);
+    } catch (error) {
+        setResponseMsg(error.message);
+    }
+  }
+
   return  (
     <div className="min-h-screen flex flex-col">
      <Navbar />
@@ -32,13 +54,14 @@ function RouteComponent() {
               <Input id="password" type="password"/>
             </div>
 
-            <Button className="w-full">Login</Button>
+            <Button className="w-full" onClick={handleLogin}>Login</Button>
           </div>
 
           <div className="text-center text-sm">
             <span>Don't have an account? </span>
             <Link to="/register" className="text-accent">Register</Link>
           </div>
+          <h2>{responseMsg}</h2>
         </div>
       </div>
     </div>

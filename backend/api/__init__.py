@@ -14,6 +14,7 @@ from api.models.usermodel import AppUser
 def create_app(config_class=ConfigDevelopment):
     app = Flask(__name__)
     CORS(app)
+
     
     app.config.from_object(config_class)
 
@@ -22,6 +23,7 @@ def create_app(config_class=ConfigDevelopment):
 
     with app.app_context():
         try:
+            db.drop_all()
             db.create_all()
             print("Success")
         except:
