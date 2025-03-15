@@ -15,7 +15,7 @@ export const Route = createFileRoute('/register')({
 
 
 function Register() {
-  const [responseMsg, setResponseMsg] = useState("");
+  const [responseMsg, setResponseMsg] = useState<string>("");
 
   const handleRegister = async () => {
     try {

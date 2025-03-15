@@ -12,22 +12,23 @@ export const Route = createFileRoute('/login')({
 })
 
 function Login() {
-  const [responseMsg, setResponseMsg] = useState("");
+  const [responseMsg, setResponseMsg] = useState<string>("");
 
   const handleLogin = async () => {
     try {
       const res = await fetch("http://localhost:5000/login", {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Basic ' + btoa("TestUser" + ':' + "pafssword")
-        }
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({email: "test@gmail.com", password: "password"})
       });
       if (!res.ok) {
         throw new Error(`Response status: ${res.status}`);
       }
       const data = await res.json();
       setResponseMsg(data["token"]);
+      localStorage.setItem("token", data["token"]);
     } catch (error) {
         setResponseMsg(error.message);
     }
@@ -62,6 +63,7 @@ function Login() {
             <Link to="/register" className="text-accent">Register</Link>
           </div>
           <h2>{responseMsg}</h2>
+          <Link to="/dashboard">Dashboard</Link>
         </div>
       </div>
     </div>

@@ -10,6 +10,7 @@ bcrypt = Bcrypt()
 
 
 from api.models.usermodel import AppUser 
+from api.models.revokedtoken import RevokedToken 
 
 def create_app(config_class=ConfigDevelopment):
     app = Flask(__name__)
