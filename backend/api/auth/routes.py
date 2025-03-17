@@ -8,28 +8,6 @@ from api import db
 import jwt 
 from datetime import datetime, timedelta, timezone
 
-'''blacklist = set()
-
-def token_required(f):
-   @wraps(f)
-   def decorator(*args, **kwargs):
-       token = None
-       if 'x-access-tokens' in request.headers:
-           token = request.headers['x-access-tokens']
- 
-       if not token:
-           return jsonify({'message': 'Missing valid token'})
-       try:
-           data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=["HS256"])
-           current_user = AppUser.query.filter_by(id=data['id']).first()
-       except jwt.ExpiredSignatureError:
-           return jsonify({'message': 'Token has expired'})
-       except jwt.InvalidTokenError:
-           return jsonify({'message': 'Token is invalid'})
- 
-       return f(current_user, *args, **kwargs)
-   return decorator'''
-
 @bp.route('/register', methods=['POST'])
 def register():
     db.session.query(AppUser).delete()
@@ -91,3 +69,12 @@ def getTokens():
         }
         rtlist.append(rt_info)
     return jsonify({'revokedTokens': rtlist})
+
+
+#Helper route during development to clear all database tables
+@bp.route('/cleardb')
+def clearDB():   
+    AppUser.query.delete()
+    RevokedToken.query.delete()
+    db.session.commit()
+    return jsonify({'Clear': 'Database cleared'})
