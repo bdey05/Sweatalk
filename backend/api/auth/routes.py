@@ -44,8 +44,8 @@ def logout(current_user):
 
 
 @bp.route('/protected')
-@token_required
-def getUsers(current_user):
+#@token_required
+def getUsers():
     users = AppUser.query.all()
     userList = []
     for user in users:

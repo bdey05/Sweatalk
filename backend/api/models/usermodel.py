@@ -9,6 +9,9 @@ class AppUser(db.Model):
     id: Mapped[Integer] = mapped_column(Integer, primary_key=True)
     username: Mapped[String] = mapped_column(String(30), unique=True, nullable=False) 
     email: Mapped[String] = mapped_column(String(100), unique=True, nullable=False)
+    #age: Mapped[Integer] = mapped_column(Integer, unique=True, nullable=False)
+    #weight: Mapped[Integer] = mapped_column(Integer, unique=True, nullable=False)
+
     password_hash: Mapped[String] = mapped_column(String(256), nullable=False)
     profile_complete: Mapped[Boolean] = mapped_column(Boolean, default=False, nullable=False)
 
@@ -28,6 +31,9 @@ class AppUser(db.Model):
 
     def __repr__(self):
         return f'<User {self.username}>'
+    
+    def to_dict(self):
+        pass 
     
     
 

@@ -20,8 +20,8 @@ import {
 } from "@/components/ui/sidebar";
 
 const navigationItems = [
-  { icon: LayoutDashboard, label: "Dashboard", to: "/dashboard", isActive: true },
-  { icon: Calendar, label: "Schedule", to: "/schedule" },
+  //{ icon: LayoutDashboard, label: "Dashboard", to: "/dashboard", isActive: true },
+  //{ icon: Calendar, label: "Schedule", to: "/schedule" },
   { icon: DumbbellIcon, label: "Workout Tracker", to: "/workout-tracker" },
   { icon: Utensils, label: "Meal Plan", to: "/meal-plan" },
 ]

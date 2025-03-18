@@ -10,11 +10,11 @@ type AuthState = {
         email: string
     } | null
     token: string | null
-    loginError: customError,
+    loginError: customError
     registerError: customError
-    login: (email: string, password: string) => Promise<boolean>
-    register: (username: string, email: string, password: string) => Promise<boolean>
-    logout: () => void
+    handleLogin: (email: string, password: string) => Promise<boolean>
+    handleRegister: (username: string, email: string, password: string, age: number, weight: number, height: number) => Promise<boolean>
+    handleLogout: () => void
 };
 
 
@@ -23,7 +23,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     token: localStorage.getItem("token"),
     loginError: null,
     registerError: null,
-    login: async (email, password) => {
+    handleLogin: async (email, password) => {
         try {
           const res = await fetch("http://localhost:5000/login", {
             method: 'POST',
@@ -38,14 +38,15 @@ export const useAuthStore = create<AuthState>((set) => ({
           const data = await res.json();
           localStorage.setItem("token", data["token"]);
           //ToDo: Modify Flask API to return User on login along with token
-          set({user: data["user"], token: data["token"]});
+          //set({user: data["user"], token: data["token"]});
+          set({token: data["token"]});
           return true;
         } catch (error) {
             set({loginError: error as customError});
             return false;
         }
     },
-    register: async (username, email, password) => {
+    handleRegister: async (username, email, password, age, weight, height) => {
         try {
           const res = await fetch("http://localhost:5000/register", {
             method: 'POST',
@@ -64,7 +65,7 @@ export const useAuthStore = create<AuthState>((set) => ({
             return false;
         }
     },
-    logout: () => {
+    handleLogout: () => {
         localStorage.clear();
         set({user: null, token: null}); 
     }

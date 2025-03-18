@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import Navbar from "@/components/ui/navbar"
 import { useState } from 'react'
+import { useAuthStore } from '@/stores/authstore'
 
 
 export const Route = createFileRoute('/login')({
@@ -12,9 +13,13 @@ export const Route = createFileRoute('/login')({
 })
 
 function Login() {
-  const [responseMsg, setResponseMsg] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const token = useAuthStore((state) => state.token);
+  const handleLogin = useAuthStore((state) => state.handleLogin);
+  const loginError = useAuthStore((state) => state.loginError);
 
-  const handleLogin = async () => {
+  /*const handleLogin = async () => {
     try {
       const res = await fetch("http://localhost:5000/login", {
         method: 'POST',
@@ -32,7 +37,8 @@ function Login() {
     } catch (error) {
         setResponseMsg(error.message);
     }
-  }
+  }*/
+  //ToDo: Create a validateFormFields function and then call handleLogin within that field 
 
   return  (
     <div className="min-h-screen flex flex-col">
@@ -46,23 +52,27 @@ function Login() {
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" placeholder="name@example.com" type="email" />
+              <Input id="email" placeholder="name@example.com" type="email" onChange={(e) => setEmail(e.target.value)}/>
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">Password</Label>
               </div>
-              <Input id="password" type="password"/>
+              <Input id="password" type="password" onChange={(e) => setPassword(e.target.value)}/>
             </div>
 
-            <Button className="w-full" onClick={handleLogin}>Login</Button>
+            <Button className="w-full" onClick={() => handleLogin(email, password)}>Login</Button>
           </div>
 
           <div className="text-center text-sm">
             <span>Don't have an account? </span>
             <Link to="/register" className="text-accent">Register</Link>
           </div>
-          <h2>{responseMsg}</h2>
+          <h2>{loginError && loginError?.message}</h2>
+          <h2>{token && token}</h2>
+          <h2>{email}</h2>
+          <h2>{password}</h2>
+
           <Link to="/dashboard">Dashboard</Link>
         </div>
       </div>
