@@ -56,10 +56,14 @@ export const useAuthStore = create<AuthState>((set) => ({
             },
             body: JSON.stringify({username, email, password})
           });
-          if (!res.ok) {
-            throw new Error(`Response status: ${res.status}`);
-          }
           const data = await res.json();
+          if (!res.ok) {
+            throw new Error(data['error'] || `Response status: ${res.status}`);
+          }
+          localStorage.setItem("token", data["token"]);
+          //ToDo: Modify Flask API to return User on register along with token
+          //set({user: data["user"], token: data["token"]});
+          set({token: data["token"]});
           return true;
         } catch (error) {
             set({registerError: error as customError});

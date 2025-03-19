@@ -10,15 +10,20 @@ from datetime import datetime, timedelta, timezone
 
 @bp.route('/register', methods=['POST'])
 def register():
-    db.session.query(AppUser).delete()
-    db.session.commit()
+    #db.session.query(AppUser).delete()
+    #db.session.commit()
     data = request.get_json() 
+    if AppUser.query.filter_by(email=data['email']).first():
+        return make_response(jsonify({'error': 'User with this email already exists'}), 400)
+    if AppUser.query.filter_by(username=data['username']).first():
+        return make_response(jsonify({'error': 'User with this username already exists'}), 400)
     newUser = AppUser(username=data['username'], email=data['email'])
     newUser.set_password(data['password'])
     db.session.add(newUser)
     db.session.commit()
-
-    return jsonify({'message': 'Account created succesfully'})
+    user = AppUser.query.filter_by(email=data['email']).first()  
+    token = jwt.encode({'id' : user.id, 'exp' : datetime.now(timezone.utc) + timedelta(hours=1)}, current_app.config['SECRET_KEY'], "HS256")
+    return jsonify({'token': token})
 
 @bp.route('/login', methods=['POST'])
 def login():

@@ -56,7 +56,6 @@ function Login() {
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
-                placeholder="name@example.com"
                 type="email"
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -84,7 +83,7 @@ function Login() {
               Register
             </Link>
           </div>
-          <h2>{loginError && <div>{loginError?.message}</div>}</h2>
+          <div>{loginError && <p>{loginError?.message}</p>}</div>
         </div>
       </div>
     </div>
