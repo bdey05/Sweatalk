@@ -15,6 +15,7 @@ type AuthState = {
     handleLogin: (email: string, password: string) => Promise<boolean>
     handleRegister: (username: string, email: string, password: string, age: number, weight: number, height: number) => Promise<boolean>
     handleLogout: () => void
+    resetErrors: () => void
 };
 
 
@@ -33,7 +34,7 @@ export const useAuthStore = create<AuthState>((set) => ({
             body: JSON.stringify({email, password})
           });
           if (!res.ok) {
-            throw new Error(`Response status: ${res.status}`);
+            throw new Error("Invalid credentials, please try again.");
           }
           const data = await res.json();
           localStorage.setItem("token", data["token"]);
@@ -68,5 +69,8 @@ export const useAuthStore = create<AuthState>((set) => ({
     handleLogout: () => {
         localStorage.clear();
         set({user: null, token: null}); 
+    },
+    resetErrors: () => {
+      set({loginError: null, registerError: null});
     }
 }))

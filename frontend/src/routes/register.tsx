@@ -6,16 +6,18 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import Navbar from "@/components/ui/navbar";
 import { useState } from 'react'
+import { useAuthStore } from '@/stores/authstore'
 
 
 export const Route = createFileRoute('/register')({
   component: Register,
 })
 
-
-
 function Register() {
   const [responseMsg, setResponseMsg] = useState<string>("");
+  //const handleRegister = useAuthStore((state) => state.handleRegister);
+  const registerError = useAuthStore((state) => state.registerError);
+  const resetErrors = useAuthStore((state) => state.resetErrors);
 
   const handleRegister = async () => {
     try {

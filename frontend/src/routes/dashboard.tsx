@@ -1,6 +1,7 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
-
 import AppNav from "@/components/ui/appnav"; 
+
+
 
 export const Route = createFileRoute("/dashboard")({
   beforeLoad: async () => {
