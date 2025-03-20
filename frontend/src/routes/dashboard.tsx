@@ -1,5 +1,7 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import AppNav from "@/components/ui/appnav"; 
+import { useAuthStore } from "@/stores/authstore";
+import { useEffect, useState } from "react";
 
 
 
@@ -12,10 +14,16 @@ export const Route = createFileRoute("/dashboard")({
   component: Dashboard,
 });
 
+
 function Dashboard() {
+ const user = useAuthStore((state) => state.user);
+ console.log(user);
  
   return (
-    <AppNav />
+    <div>
+      <AppNav />
+    </div>
+    
   );
   
 }

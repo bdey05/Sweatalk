@@ -10,20 +10,26 @@ from datetime import datetime, timedelta, timezone
 
 @bp.route('/register', methods=['POST'])
 def register():
-    #db.session.query(AppUser).delete()
-    #db.session.commit()
     data = request.get_json() 
     if AppUser.query.filter_by(email=data['email']).first():
         return make_response(jsonify({'error': 'User with this email already exists'}), 400)
     if AppUser.query.filter_by(username=data['username']).first():
         return make_response(jsonify({'error': 'User with this username already exists'}), 400)
-    newUser = AppUser(username=data['username'], email=data['email'])
+    newUser = AppUser(username=data['username'], email=data['email'], age=data["age"], weight=data["weight"], height=data["height"])
     newUser.set_password(data['password'])
     db.session.add(newUser)
     db.session.commit()
     user = AppUser.query.filter_by(email=data['email']).first()  
     token = jwt.encode({'id' : user.id, 'exp' : datetime.now(timezone.utc) + timedelta(hours=1)}, current_app.config['SECRET_KEY'], "HS256")
-    return jsonify({'token': token})
+    userObj = {
+        "id": user.id,
+        "email": user.email,
+        "username": user.username,
+        "age": user.age,
+        "weight": user.weight,
+        "height": user.height
+       }
+    return jsonify({'token': token, 'userObj': userObj})
 
 @bp.route('/login', methods=['POST'])
 def login():
@@ -34,7 +40,15 @@ def login():
     user = AppUser.query.filter_by(email=auth['email']).first()  
     if user.verify_password(auth['password']):
        token = jwt.encode({'id' : user.id, 'exp' : datetime.now(timezone.utc) + timedelta(hours=1)}, current_app.config['SECRET_KEY'], "HS256")
-       return jsonify({'token' : token})
+       userObj = {
+        "id": user.id,
+        "email": user.email,
+        "username": user.username,
+        "age": user.age,
+        "weight": user.weight,
+        "height": user.height
+       }
+       return jsonify({'token' : token, 'userObj': userObj})
  
     return make_response('Verification failed', 401, {'Authentication': 'Login required"'})   
 
@@ -57,8 +71,11 @@ def getUsers():
         user_info = {
             "id": user.id,
             "username": user.username,
-            "email": user.email    
-        }
+            "email": user.email,
+            "age": user.age,
+            "weight": user.weight,
+            "height": user.height
+        }   
         userList.append(user_info)
     return jsonify({'users': userList})
 

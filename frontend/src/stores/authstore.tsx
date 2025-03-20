@@ -14,7 +14,7 @@ type AuthState = {
     registerError: customError
     handleLogin: (email: string, password: string) => Promise<boolean>
     handleRegister: (username: string, email: string, password: string, age: number, weight: number, height: number) => Promise<boolean>
-    handleLogout: () => void
+    handleLogout: () => Promise<boolean>
     resetErrors: () => void
 };
 
@@ -38,9 +38,8 @@ export const useAuthStore = create<AuthState>((set) => ({
           }
           const data = await res.json();
           localStorage.setItem("token", data["token"]);
-          //ToDo: Modify Flask API to return User on login along with token
-          //set({user: data["user"], token: data["token"]});
-          set({token: data["token"]});
+          localStorage.setItem("user", data["userObj"]);
+          set({user: data["userObj"], token: data["token"]});
           return true;
         } catch (error) {
             set({loginError: error as customError});
@@ -54,25 +53,43 @@ export const useAuthStore = create<AuthState>((set) => ({
             headers: {
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({username, email, password})
+            body: JSON.stringify({username, email, password, age, weight, height})
           });
           const data = await res.json();
           if (!res.ok) {
             throw new Error(data['error'] || `Response status: ${res.status}`);
           }
           localStorage.setItem("token", data["token"]);
-          //ToDo: Modify Flask API to return User on register along with token
-          //set({user: data["user"], token: data["token"]});
-          set({token: data["token"]});
+          localStorage.setItem("user", data["userObj"]);
+          set({user: data["userObj"], token: data["token"]});
           return true;
         } catch (error) {
             set({registerError: error as customError});
             return false;
         }
     },
-    handleLogout: () => {
-        localStorage.clear();
-        set({user: null, token: null}); 
+    handleLogout: async () => {
+        const JWT = localStorage.getItem("token");
+        try {
+          const res = await fetch("http://localhost:5000/logout", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "x-access-tokens": JWT || "",
+            },
+          });
+          if (!res.ok)
+          {
+            throw new Error(`Response status: ${res.status}`);
+          }
+          localStorage.clear();
+          set({user: null, token: null}); 
+          return true;
+        } catch(error) {
+            console.log(error);
+            return false;
+        }
+        
     },
     resetErrors: () => {
       set({loginError: null, registerError: null});

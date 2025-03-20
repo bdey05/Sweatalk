@@ -18,42 +18,19 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { useAuthStore } from "@/stores/authstore";
 
 const navigationItems = [
   //{ icon: LayoutDashboard, label: "Dashboard", to: "/dashboard", isActive: true },
   //{ icon: Calendar, label: "Schedule", to: "/schedule" },
-  { icon: DumbbellIcon, label: "Workout Tracker", to: "/workout-tracker" },
-  { icon: Utensils, label: "Meal Plan", to: "/meal-plan" },
+  { icon: DumbbellIcon, label: "Workout Tracker", to: "/workout" },
+  { icon: Utensils, label: "Meal Plan", to: "/fooddiary" },
 ]
 
-import { useState } from "react";
 
 const AppNav = () => {
+  const handleLogout = useAuthStore((state) => state.handleLogout);
 
-    const [JWT, setJWT] = useState<string | null>(localStorage.getItem("token"));
-
-    const handleLogout = async () => {
-      const token = localStorage.getItem("token");
-      try {
-        const res = await fetch("http://localhost:5000/logout", {
-          method: "POST",
-          headers: {
-              "Content-Type": "application/json",
-              "x-access-tokens": token || "",
-          },
-        });
-        if (!res.ok)
-        {
-          throw new Error(`Response status: ${res.status}`);
-        }
-        localStorage.clear();
-        setJWT(null);
-  
-      } catch(error) {
-          console.log(error);
-      }
-    }
-    
   return (
      <SidebarProvider>
           <Sidebar className="border-sidebar-border">
