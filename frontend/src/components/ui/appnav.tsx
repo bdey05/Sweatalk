@@ -23,8 +23,8 @@ import { useAuthStore } from "@/stores/authstore";
 const navigationItems = [
   //{ icon: LayoutDashboard, label: "Dashboard", to: "/dashboard", isActive: true },
   //{ icon: Calendar, label: "Schedule", to: "/schedule" },
+  { icon: Utensils, label: "Meal Plan", to: "/mealplanner" },
   { icon: DumbbellIcon, label: "Workout Tracker", to: "/workout" },
-  { icon: Utensils, label: "Meal Plan", to: "/fooddiary" },
 ]
 
 

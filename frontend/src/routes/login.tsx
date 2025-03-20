@@ -36,7 +36,7 @@ function Login() {
 
   useEffect(() => {
     if (token) {
-      navigate({ to: "/dashboard" });
+      navigate({ to: "/mealplanner" });
     }
   }, [token, navigate])
 
