@@ -8,6 +8,9 @@ type AuthState = {
         id: number
         username: string
         email: string
+        age: number 
+        weight: number 
+        height: number
     } | null
     token: string | null
     loginError: customError
@@ -38,7 +41,7 @@ export const useAuthStore = create<AuthState>((set) => ({
           }
           const data = await res.json();
           localStorage.setItem("token", data["token"]);
-          localStorage.setItem("user", data["userObj"]);
+          localStorage.setItem("user", JSON.stringify(data["userObj"]));
           set({user: data["userObj"], token: data["token"]});
           return true;
         } catch (error) {
@@ -60,7 +63,7 @@ export const useAuthStore = create<AuthState>((set) => ({
             throw new Error(data['error'] || `Response status: ${res.status}`);
           }
           localStorage.setItem("token", data["token"]);
-          localStorage.setItem("user", data["userObj"]);
+          localStorage.setItem("user", JSON.stringify(data["userObj"]));
           set({user: data["userObj"], token: data["token"]});
           return true;
         } catch (error) {

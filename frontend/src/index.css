@@ -98,5 +98,25 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  [data-sidebar="sidebar"] {
+    overflow-x: hidden !important;
+    max-width: 100% !important;
+  }
+  
+  [data-sidebar="content"] {
+    overflow-x: hidden !important;
+    max-width: 100% !important;
+  }
+  
+  [data-sidebar="group"] {
+    overflow-x: hidden !important;
+    max-width: 100% !important;
+  }
+  
+  [data-sidebar="group-content"] {
+    overflow-x: hidden !important;
+    max-width: 100% !important;
+  }
 }
 
