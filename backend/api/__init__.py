@@ -33,7 +33,7 @@ def create_app(config_class=ConfigDevelopment):
     from api.auth import bp as authbp
     app.register_blueprint(authbp)
     
-    from api.landing import bp as landingbp
-    app.register_blueprint(landingbp)
-    
+    from api.meals import bp as mealsbp
+    app.register_blueprint(mealsbp)
+
     return app 
