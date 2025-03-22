@@ -26,5 +26,3 @@ def meals():
         return jsonify(res.json()), 200 
     except requests.RequestException as e:
         return jsonify({'Error': 'Failed to communicate with API'}), 500
-
-    return '<h2>Meals</h2>'

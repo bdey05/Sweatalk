@@ -2,6 +2,10 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import AppNav from "@/components/ui/appnav";
 import RightSidebar from "@/components/ui/rightsidebar";
 import WeekNav from "@/components/ui/weeknav";
+import { Button } from "@/components/ui/button";
+import { Plus, Save } from "lucide-react";
+import MealCard from "@/components/ui/mealcard";
+import { useState } from "react";
 
 export const Route = createFileRoute("/mealplanner")({
   beforeLoad: async () => {
@@ -13,6 +17,30 @@ export const Route = createFileRoute("/mealplanner")({
 });
 
 function MealPlanner() {
+  const [meals, setMeals] = useState([
+    {
+      name: "Chicken Sandwich with Tomato Soup",
+      calories: 587,
+      protein: 35,
+      carbohydrates: 40,
+      fat: 90,
+    },
+    {
+      name: "Lasagna with Vegetables",
+      calories: 480,
+      protein: 35,
+      carbohydrates: 50,
+      fat: 40,
+    },
+  ]);
+
+  let addMeal = () => {
+    let newMeal = {name: "cake", calories: 347, protein: 43, carbohydrates: 30, fat: 30};
+    setMeals([...meals, newMeal]);
+  }
+
+
+  
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
@@ -25,7 +53,29 @@ function MealPlanner() {
           <WeekNav />
         </header>
 
-        <main className="flex-1 overflow-auto p-6"></main>
+        <main className="flex flex-1 flex-col items-center overflow-auto p-6">
+          <div className="flex gap-5">
+            <Button className="bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-3 shadow-lg flex items-center gap-2 transition-transform hover:scale-105" onClick={addMeal}>
+              <Plus className="w-5 h-5" />
+              Add New Meal
+            </Button>
+            <Button className="bg-secondary text-primary-foreground hover:bg-secondary/90 px-6 py-3 shadow-lg flex items-center gap-2 transition-transform hover:scale-105" onClick={addMeal}>
+              <Plus className="w-5 h-5" />
+              Add Existing Meal
+            </Button>
+          </div>
+          {meals.length === 0 ? (
+            <p className="mt-4 text-muted-foreground">
+              No Meals Tracked For This Day
+            </p>
+          ) : (
+            <div className="mt-6 space-y-4 w-full max-w-xl flex flex-col items-center">
+              {meals.map((meal, index) => (
+                <MealCard key={index} meal={meal} />
+              ))}
+            </div>
+          )}
+        </main>
       </div>
 
       <div className="flex-shrink-0">
