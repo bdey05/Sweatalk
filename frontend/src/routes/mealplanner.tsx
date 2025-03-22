@@ -7,7 +7,6 @@ import { Calendar } from "@/components/ui/calendar";
 import RightSidebar from "@/components/ui/rightsidebar";
 import WeekNav from "@/components/ui/weeknav";
 
-
 export const Route = createFileRoute("/mealplanner")({
   beforeLoad: async () => {
     if (!localStorage.getItem("token")) {
@@ -20,8 +19,8 @@ export const Route = createFileRoute("/mealplanner")({
 
 function MealPlanner() {
  const user = useAuthStore((state) => state.user);
- 
-  return (
+
+ return (
     <div className="flex">
       <AppNav/>
       <WeekNav />

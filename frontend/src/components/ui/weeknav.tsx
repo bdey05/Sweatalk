@@ -1,53 +1,64 @@
 import React from 'react'
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
-
+import { format, addDays, subDays, startOfWeek, isSameDay, isToday } from "date-fns"
 import { Button } from "@/components/ui/button"
+import { useCalendarStore } from "@/stores/calendarstore";
 
 const WeekNav = () => {
-    const weekRange = "March 21 - March 27, 2023"
-  const weekDays = [
-    { day: "Sun", date: "21", isSelected: false, isToday: false },
-    { day: "Mon", date: "22", isSelected: false, isToday: true },
-    { day: "Tue", date: "23", isSelected: true, isToday: false },
-    { day: "Wed", date: "24", isSelected: false, isToday: false },
-    { day: "Thu", date: "25", isSelected: false, isToday: false },
-    { day: "Fri", date: "26", isSelected: false, isToday: false },
-    { day: "Sat", date: "27", isSelected: false, isToday: false },
-  ]
+  const { date, setDate, weekStart, setWeekStart, currentMonth, setCurrentMonth, getToday } = useCalendarStore()
+
+  const weekDays = React.useMemo(() => {
+    return Array.from({ length: 7 }).map((_, index) => addDays(weekStart, index))
+  }, [weekStart])
+
+  const handlePrevWeek = () => {
+    setWeekStart(subDays(weekStart, 7))
+    setCurrentMonth(subDays(weekStart, 3))
+  }
+
+  const handleNextWeek = () => {
+    setWeekStart(addDays(weekStart, 7))
+    setCurrentMonth(addDays(weekStart, 3))
+
+  }
+
   return (
     <div className="flex flex-col items-center space-y-2">
       <div className="flex items-center justify-between w-full max-w-md">
-        <Button variant="outline" size="icon" onClick={() => {}} aria-label="Previous week">
+        <Button variant="outline" size="icon" onClick={handlePrevWeek} aria-label="Previous week">
           <ChevronLeft className="h-4 w-4" />
         </Button>
 
-        <h2 className="text-lg font-medium">{weekRange}</h2>
+        <h2 className="text-lg font-medium">
+          {format(weekStart, "MMMM d")} - {format(addDays(weekStart, 6), "MMMM d, yyyy")}
+        </h2>
 
-        <Button variant="outline" size="icon" onClick={() => {}} aria-label="Next week">
+        <Button variant="outline" size="icon" onClick={handleNextWeek} aria-label="Next week">
           <ChevronRight className="h-4 w-4" />
         </Button>
       </div>
 
       <div className="flex justify-center gap-1 w-full max-w-md">
-        {weekDays.map((dayInfo, index) => (
+        {weekDays.map((day) => (
           <Button
-            key={index}
+            key={format(day, "yyyy-MM-dd")}
             variant="ghost"
             className={cn(
               "flex flex-col h-auto py-2 px-0 flex-1 rounded-md",
-              dayInfo.isSelected && "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
-              dayInfo.isToday && !dayInfo.isSelected && "border border-primary",
+              isSameDay(day, date) &&
+                "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
+              isToday(day) && !isSameDay(day, date) && "border border-primary",
             )}
-            onClick={() => {}}
+            onClick={() => setDate(day)}
           >
-            <span className="text-xs font-medium">{dayInfo.day}</span>
-            <span className="text-xl font-bold">{dayInfo.date}</span>
+            <span className="text-xs font-medium">{format(day, "EEE")}</span>
+            <span className="text-xl font-bold">{format(day, "d")}</span>
           </Button>
         ))}
       </div>
 
-      <Button variant="outline" size="sm" onClick={() => {}} className="mt-2">
+      <Button variant="outline" size="sm" onClick={getToday} className="mt-2">
         Today
       </Button>
     </div>

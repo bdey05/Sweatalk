@@ -22,6 +22,7 @@ const RightSidebar = () => {
   const setDate = useCalendarStore((state) => state.setDate);
   const currentMonth = useCalendarStore((state) => state.currentMonth);
   const setCurrentMonth = useCalendarStore((state) => state.setCurrentMonth);
+  const setWeekStart = useCalendarStore((state) => state.setWeekStart);
   const getToday = useCalendarStore((state) => state.getToday);
 
   useEffect(() => {
@@ -50,7 +51,10 @@ const RightSidebar = () => {
               <Calendar
                 mode="single"
                 selected={date}
-                onSelect={setDate}
+                onSelect={(d) => {
+                  setDate(d);
+                  setWeekStart(d);
+                }}
                 month={currentMonth}
                 onMonthChange={setCurrentMonth}
                 className="w-full max-w-full"
