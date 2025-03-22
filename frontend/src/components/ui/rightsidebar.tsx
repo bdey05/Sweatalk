@@ -15,15 +15,14 @@ import {
 import { Button } from "@/components/ui/button";
 import Profile from "./profile";
 import { useState } from "react";
+import { useCalendarStore } from "@/stores/calendarstore";
 
 const RightSidebar = () => {
-  const [date, setDate] = useState<Date | undefined>(new Date());
-  const [currentMonth, setCurrentMonth] = useState(new Date());
-
-  const getToday = () => {
-    setDate(new Date());
-    setCurrentMonth(new Date());
-  }
+  const date = useCalendarStore((state) => state.date);
+  const setDate = useCalendarStore((state) => state.setDate);
+  const currentMonth = useCalendarStore((state) => state.currentMonth);
+  const setCurrentMonth = useCalendarStore((state) => state.setCurrentMonth);
+  const getToday = useCalendarStore((state) => state.getToday);
 
   useEffect(() => {
     console.log(date);

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { DayPicker } from "react-day-picker";
 import { Calendar } from "@/components/ui/calendar";
 import RightSidebar from "@/components/ui/rightsidebar";
+import WeekNav from "@/components/ui/weeknav";
 
 
 export const Route = createFileRoute("/mealplanner")({
@@ -23,6 +24,7 @@ function MealPlanner() {
   return (
     <div className="flex">
       <AppNav/>
+      <WeekNav />
       <RightSidebar />
       
     </div>
