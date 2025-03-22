@@ -1,5 +1,5 @@
 import React from 'react'
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { ChevronLeft, ChevronRight, CalendarIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { format, addDays, subDays, startOfWeek, isSameDay, isToday } from "date-fns"
 import { Button } from "@/components/ui/button"
@@ -59,6 +59,7 @@ const WeekNav = () => {
       </div>
 
       <Button variant="outline" size="sm" onClick={getToday} className="mt-2">
+        <CalendarIcon className="h-4 w-4" />
         Today
       </Button>
     </div>
