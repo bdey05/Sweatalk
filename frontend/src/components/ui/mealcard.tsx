@@ -47,6 +47,9 @@ export default function MealCard({ meal }) {
           <Button className="flex-1">
             View/Edit Ingredients
           </Button>
+          <Button variant="destructive" className="flex-1">
+            Delete Meal
+          </Button>
         </div>
       </CardContent>
     </Card>

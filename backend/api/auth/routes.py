@@ -3,10 +3,13 @@ from flask import request, jsonify, current_app, make_response
 from api.auth import bp 
 from api.models.usermodel import AppUser
 from api.models.revokedtoken import RevokedToken
+from api.models.meal import Meal
+from api.models.usermeal import UserMeal
+from api.models.ingredient import Ingredient
 from api.helpers import token_required
 from api import db
 import jwt 
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, date
 
 @bp.route('/register', methods=['POST'])
 def register():
@@ -61,10 +64,9 @@ def logout(current_user):
     db.session.commit()
     return jsonify({'message': 'Successfully logged out'}), 200
 
-
-@bp.route('/protected')
-#@token_required
-def getUsers():
+#Helper route during development to get all DB contents
+@bp.route('/getdb')
+def get_db_items():
     users = AppUser.query.all()
     userList = []
     for user in users:
@@ -77,11 +79,6 @@ def getUsers():
             "height": user.height
         }   
         userList.append(user_info)
-    return jsonify({'users': userList})
-
-
-@bp.route('/tokens')
-def getTokens():
     revokedTokens = RevokedToken.query.all()
     rtlist = []
     for rt in revokedTokens:
@@ -90,13 +87,79 @@ def getTokens():
             "token": rt.token  
         }
         rtlist.append(rt_info)
-    return jsonify({'revokedTokens': rtlist})
+    allMeals = Meal.query.all()
+    meallist = []
+    for meal in allMeals:
+        meal_info = {
+            "id": meal.id,
+            "name": meal.name,
+            "calories": meal.calories,
+            "protein": meal.protein,
+            "carbohydrates": meal.carbohydrates,
+            "fat": meal.fat,
+            "is_saved": meal.is_saved,
+            #"ig": meal.ingredients[0].api_query
+        }
+        meallist.append(meal_info)
+    ingredients = Ingredient.query.all()
+    ingredientlist = []
+    for ig in ingredients:
+        ig_info = {
+            "id": ig.id,
+            "meal_id": ig.meal_id,
+            "is_branded": ig.is_branded,
+            "api_query": ig.api_query,
+            "serving_qty": ig.serving_qty,
+            "serving_unit": ig.serving_unit,
+        }
+        ingredientlist.append(ig_info)
+    usermeals = UserMeal.query.all()
+    umlist = []
+    for um in usermeals:
+        um_info = {
+            "id": um.id,
+            "meal_id": um.meal_id,
+            "user_id": um.user_id,
+            "date": um.date,
+            "serving_qty": um.serving_qty
+            #"assoc_user": um.user.username,
+            #"assoc_meal": um.meal.name
+        }
+        umlist.append(um_info)
+    return jsonify({'users': userList, 'revokedTokens': rtlist, 'meals': meallist, 'ingredients': ingredientlist, 'usermeals': umlist})
 
+
+#Helper route during development to insert a meal into the database
+@bp.route('/insertmeal')
+def insert_meal():
+    newMeal = Meal(name="Chicken Sandwich", calories=350, protein=24, carbohydrates=75, fat=20, is_saved=False)
+    db.session.add(newMeal)
+    db.session.commit()
+    return jsonify({'Success': 'Inserted Meal'})
+
+#Helper route during development to insert an ingredient into the database
+@bp.route('/insertig')
+def insert_ingredient():
+    newIngredient = Ingredient(meal_id=1, is_branded=False, api_query="grape", serving_qty=2, serving_unit="fl oz")
+    db.session.add(newIngredient)
+    db.session.commit()
+    return jsonify({'Success': 'Inserted Ingredient'})
+
+#Helper route during development to insert a usermeal into the database
+@bp.route('/insertum')
+def insert_umeal():
+    newUM = UserMeal(user_id=1, meal_id=1, serving_qty=1.5, date=date.today())
+    db.session.add(newUM)
+    db.session.commit()
+    return jsonify({'Success': 'Inserted User Meal'})
 
 #Helper route during development to clear all database tables
 @bp.route('/cleardb')
-def clearDB():   
+def clear_db():   
     AppUser.query.delete()
     RevokedToken.query.delete()
+    Meal.query.delete()
+    Ingredient.query.delete()
+    UserMeal.query.delete()
     db.session.commit()
     return jsonify({'Clear': 'Database cleared'})
