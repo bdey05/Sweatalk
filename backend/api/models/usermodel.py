@@ -12,8 +12,9 @@ class AppUser(db.Model):
     age: Mapped[Integer] = mapped_column(Integer, unique=False, nullable=False)
     weight: Mapped[Integer] = mapped_column(Integer, unique=False, nullable=False)
     height: Mapped[Integer] = mapped_column(Integer, unique=False, nullable=False)
-
     password_hash: Mapped[String] = mapped_column(String(256), nullable=False)
+
+    meals = db.relationship('UserMeal', back_populates='user')
 
 
     @validates('email')

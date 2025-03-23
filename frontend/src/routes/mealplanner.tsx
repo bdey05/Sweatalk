@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Plus, Save } from "lucide-react";
 import MealCard from "@/components/ui/mealcard";
 import { useState } from "react";
+import MealList from "@/components/ui/meallist";
 
 export const Route = createFileRoute("/mealplanner")({
   beforeLoad: async () => {
@@ -24,6 +25,7 @@ function MealPlanner() {
       protein: 35,
       carbohydrates: 40,
       fat: 90,
+      isSaved: true
     },
     {
       name: "Lasagna with Vegetables",
@@ -31,16 +33,14 @@ function MealPlanner() {
       protein: 35,
       carbohydrates: 50,
       fat: 40,
+      isSaved: false
     },
   ]);
 
   let addMeal = () => {
-    let newMeal = {name: "cake", calories: 347, protein: 43, carbohydrates: 30, fat: 30};
+    let newMeal = {name: "cake", calories: 347, protein: 43, carbohydrates: 30, fat: 30, isSaved: true};
     setMeals([...meals, newMeal]);
   }
-
-
-  
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
@@ -64,20 +64,9 @@ function MealPlanner() {
               Add Existing Meal
             </Button>
           </div>
-          {meals.length === 0 ? (
-            <p className="mt-4 text-muted-foreground">
-              No Meals Tracked For This Day
-            </p>
-          ) : (
-            <div className="mt-6 space-y-4 w-full max-w-xl flex flex-col items-center">
-              {meals.map((meal, index) => (
-                <MealCard key={index} meal={meal} />
-              ))}
-            </div>
-          )}
+          <MealList meals={meals} />
         </main>
       </div>
-
       <div className="flex-shrink-0">
         <RightSidebar />
       </div>

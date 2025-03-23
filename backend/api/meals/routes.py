@@ -18,7 +18,7 @@ def meals():
         'x-app-key': APP_KEY
     }
     params = {
-        "query": "burger"
+        "query": "grape"
     }
     try:
         res = requests.get(NUTRITIONIX_URL, headers=headers, params=params)

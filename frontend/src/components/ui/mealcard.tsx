@@ -1,15 +1,25 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Save } from "lucide-react";
-import { Meal } from "@/types/meal";
+import { Save, CheckCircle } from "lucide-react";
+import { useState } from "react";
 
-export default function MealCard ( {meal} ) {
+export default function MealCard({ meal }) {
+  const [isSaved, setIsSaved] = useState(meal.isSaved);
+
+  const toggleSave = () => setIsSaved(!isSaved);
   return (
-    <Card className="w-full max-w-md bg-card text-card-foreground shadow-lg rounded-xl">
+    <Card className="relative w-full max-w-md bg-card text-card-foreground shadow-lg rounded-xl">
       <CardHeader>
-        <CardTitle className="flex gap-10">
-            <h2 className="text-lg font-semibold">{meal.name}</h2>
-            <Save />
+        <CardTitle className="flex justify-between items-center">
+          <h2 className="text-lg font-semibold">{meal.name}</h2>
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label={isSaved ? "Unsave meal" : "Save meal"}
+            onClick={toggleSave}
+          >
+            {isSaved ? <CheckCircle /> : <Save />}
+          </Button>
         </CardTitle>
       </CardHeader>
 
@@ -34,10 +44,7 @@ export default function MealCard ( {meal} ) {
         </div>
 
         <div className="flex justify-between gap-4">
-          <Button className="bg-primary text-primary-foreground hover:bg-primary/90 flex-1">
-            Save Meal
-          </Button>
-          <Button variant="outline" className="flex-1">
+          <Button className="flex-1">
             View/Edit Ingredients
           </Button>
         </div>
