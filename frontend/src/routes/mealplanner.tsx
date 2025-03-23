@@ -7,6 +7,7 @@ import { Plus, Save } from "lucide-react";
 import MealCard from "@/components/ui/mealcard";
 import { useState } from "react";
 import MealList from "@/components/ui/meallist";
+import MealDialog from "@/components/ui/mealdialog";
 
 export const Route = createFileRoute("/mealplanner")({
   beforeLoad: async () => {
@@ -37,6 +38,12 @@ function MealPlanner() {
     },
   ]);
 
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const openDialog = (mode) => {
+    setDialogOpen(true);
+  };
+
   let addMeal = () => {
     let newMeal = {name: "cake", calories: 347, protein: 43, carbohydrates: 30, fat: 30, isSaved: true};
     setMeals([...meals, newMeal]);
@@ -55,7 +62,7 @@ function MealPlanner() {
 
         <main className="flex flex-1 flex-col items-center overflow-auto p-6">
           <div className="flex gap-5">
-            <Button className="bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-3 shadow-lg flex items-center gap-2 transition-transform hover:scale-105" onClick={addMeal}>
+            <Button className="bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-3 shadow-lg flex items-center gap-2 transition-transform hover:scale-105" onClick={() => setDialogOpen(true)}>
               <Plus className="w-5 h-5" />
               Add New Meal
             </Button>
@@ -70,6 +77,8 @@ function MealPlanner() {
       <div className="flex-shrink-0">
         <RightSidebar />
       </div>
+      <MealDialog open={dialogOpen} onClose={() => setDialogOpen(false)} onAddMeal={addMeal} mode="add" />
+
     </div>
   );
 }

@@ -1,11 +1,17 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Save, CheckCircle } from "lucide-react";
+import MealDialog from "./mealdialog";
 import { useState } from "react";
 
-export default function MealCard({ meal }) {
+const MealCard = ({ meal }) => {
   const [isSaved, setIsSaved] = useState(meal.isSaved);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
+  const openDialog = (mode) => {
+    setDialogOpen(true);
+  };
+  
   const toggleSave = () => setIsSaved(!isSaved);
   return (
     <Card className="relative w-full max-w-md bg-card text-card-foreground shadow-lg rounded-xl">
@@ -44,7 +50,7 @@ export default function MealCard({ meal }) {
         </div>
 
         <div className="flex justify-between gap-4">
-          <Button className="flex-1">
+          <Button className="flex-1" onClick={() => openDialog("edit")}>
             View/Edit Ingredients
           </Button>
           <Button variant="destructive" className="flex-1">
@@ -52,6 +58,9 @@ export default function MealCard({ meal }) {
           </Button>
         </div>
       </CardContent>
+      <MealDialog open={dialogOpen} onClose={() => setDialogOpen(false)} mode="edit" />
     </Card>
   );
 }
+
+export default MealCard
