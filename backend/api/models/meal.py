@@ -12,6 +12,7 @@ class Meal(db.Model):
     protein: Mapped[Integer] = mapped_column(Integer, nullable=False)
     carbohydrates: Mapped[Integer] = mapped_column(Integer, nullable=False)
     fat: Mapped[Integer] = mapped_column(Integer, nullable=False)
+    serving_qty: Mapped[Float] = mapped_column(Float, nullable=False)
     is_saved: Mapped[Boolean] = mapped_column(Boolean, nullable=False)
     ingredients = db.relationship('Ingredient', back_populates='meal')
     user_meals = db.relationship('UserMeal', back_populates='meal')

@@ -10,7 +10,10 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     APP_ID = os.environ.get('APP_ID')
     APP_KEY = os.environ.get('APP_KEY')
-    NUTRITIONIX_URL = os.environ.get('NUTRITIONIX_URL')
+    NUTRITIONIX_INSTANT_URL = os.environ.get('NUTRITIONIX_INSTANT_URL')
+    NUTRITIONIX_COMMON_URL = os.environ.get('NUTRITIONIX_COMMON_URL')
+    NUTRITIONIX_BRANDED_URL = os.environ.get('NUTRITIONIX_BRANDED_URL')
+
     
 
 class ConfigDevelopment(Config):

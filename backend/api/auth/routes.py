@@ -97,6 +97,7 @@ def get_db_items():
             "protein": meal.protein,
             "carbohydrates": meal.carbohydrates,
             "fat": meal.fat,
+            "serving_qty": meal.serving_qty,
             "is_saved": meal.is_saved,
             #"ig": meal.ingredients[0].api_query
         }
@@ -120,8 +121,7 @@ def get_db_items():
             "id": um.id,
             "meal_id": um.meal_id,
             "user_id": um.user_id,
-            "date": um.date,
-            "serving_qty": um.serving_qty
+            "date": um.date
             #"assoc_user": um.user.username,
             #"assoc_meal": um.meal.name
         }
@@ -132,7 +132,7 @@ def get_db_items():
 #Helper route during development to insert a meal into the database
 @bp.route('/insertmeal')
 def insert_meal():
-    newMeal = Meal(name="Chicken Sandwich", calories=350, protein=24, carbohydrates=75, fat=20, is_saved=False)
+    newMeal = Meal(name="Chicken Sandwich", calories=350, protein=24, carbohydrates=75, fat=20, serving_qty=1.5, is_saved=False)
     db.session.add(newMeal)
     db.session.commit()
     return jsonify({'Success': 'Inserted Meal'})
@@ -148,7 +148,7 @@ def insert_ingredient():
 #Helper route during development to insert a usermeal into the database
 @bp.route('/insertum')
 def insert_umeal():
-    newUM = UserMeal(user_id=1, meal_id=1, serving_qty=1.5, date=date.today())
+    newUM = UserMeal(user_id=1, meal_id=1, date=date.today())
     db.session.add(newUM)
     db.session.commit()
     return jsonify({'Success': 'Inserted User Meal'})
