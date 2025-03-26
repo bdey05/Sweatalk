@@ -7,6 +7,7 @@ import re
 
 class Ingredient(db.Model):
     id: Mapped[Integer] = mapped_column(Integer, primary_key=True)
+    name: Mapped[String] = mapped_column(String(75), nullable=False)
     meal_id: Mapped[Integer] = mapped_column(Integer, db.ForeignKey('meal.id'), nullable=False)
     is_branded: Mapped[Boolean] = mapped_column(Boolean, nullable=False)
     #This will be the nix_item_id if the item is Branded or the food_name if the item is a Common food

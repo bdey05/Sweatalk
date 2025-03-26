@@ -1,16 +1,22 @@
+import { getIngredients, useIngredients } from "@/hooks/useIngredients";
 import { create } from "zustand"; 
 
 
-type Ingredient = {
-    ingredientID: number
+export type Ingredient = {
+    ingredientID?: number
     associatedMealID: number
     isBranded: boolean
     apiQuery: string 
     servingQty: number
     servingUnit: number
+    name: string 
+    calories?: number
+    protein?: number
+    carbohydrates?: number
+    fat?: number
 }
 
-type Meal = {
+export type Meal = {
     mealID: number
     title: string
     calories: number
@@ -21,7 +27,7 @@ type Meal = {
     ingredients: Ingredient[]
 }
 
-type mealsForDate = {
+export type mealsForDate = {
     //mealDateID: number
     userID: number
     mealID: number
@@ -29,8 +35,9 @@ type mealsForDate = {
     date: Date
 }
 
-type useMealStore = {
+type MealState = {
     userMeals: mealsForDate[]
+    queryIngredients: (query: string) => Ingredient[] 
     addMeal: (meal: Meal, date: Date) => void
     removeMeal: (mealID: number) => void
     editMeal: (mealID: number, newMeal: Meal) => void
@@ -38,3 +45,11 @@ type useMealStore = {
     getSavedMeals: () => void
     getMealsForDate: (userID: number, date: Date) => Promise<void>;
 } 
+
+
+export const useMealStore = create<MealState>((set) => ({
+    userMeals: [],
+    queryIngredients: async (query: string) => {
+        return await getIngredients(query) || [];
+    },
+}))

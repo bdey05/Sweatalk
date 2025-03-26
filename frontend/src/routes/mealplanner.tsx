@@ -77,7 +77,7 @@ function MealPlanner() {
       <div className="flex-shrink-0">
         <RightSidebar />
       </div>
-      <MealDialog open={dialogOpen} onClose={() => setDialogOpen(false)} onAddMeal={addMeal} mode="add" />
+      <MealDialog open={dialogOpen} onClose={() => setDialogOpen(false)} mode="add" />
 
     </div>
   );

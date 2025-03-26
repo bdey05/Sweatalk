@@ -1,26 +1,48 @@
-import React from 'react'
+import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
-
-const fakeIngredients = [
-    "Apple", "Banana", "Chicken Breast", "Rice", "Salmon", "Avocado"
-  ];
-
+import { useMealStore } from "@/stores/mealstore";
 
 const MealDialog = ({ open, onClose, mode }) => {
   const [mealName, setMealName] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedIngredients, setSelectedIngredients] = useState([]);
-  
-  const filteredIngredients = fakeIngredients.filter(item =>
-    item.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const [ingredients, setingredients] = useState([]);
+
+  const queryIngredients = useMealStore((state) => state.queryIngredients);
 
   const handleAddIngredient = (ingredient) => {
-    setSelectedIngredients([...selectedIngredients, ingredient]);
+    setSelectedIngredients((prev) => [...prev, ingredient]);
   };
+  
+  useEffect(() => {
+    if (!open) {
+      setMealName("");
+      setSearchQuery("");
+      setSelectedIngredients([]);
+      setingredients([]);
+    }
+  }, [open]);
+  
+
+  useEffect(() => {
+    if (searchQuery.trim() === "") {
+      setingredients([]);
+      return;
+    }
+    const fetchIngredients = async () => {
+      try {
+        const ingredients = await queryIngredients(searchQuery);
+        setingredients(ingredients || []);
+      } catch (error) {
+        setingredients([]);
+      }
+    };
+  
+    fetchIngredients();
+  }, [searchQuery, queryIngredients]);
+  
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -43,11 +65,15 @@ const MealDialog = ({ open, onClose, mode }) => {
         />
 
         <div className="mt-2 space-y-1">
-          {filteredIngredients.map((ingredient) => (
-            <Button key={ingredient} onClick={() => handleAddIngredient(ingredient)}>
-              {ingredient}
-            </Button>
-          ))}
+          {ingredients.length > 0 ? (
+            ingredients.map((ingredient) => (
+              <Button key={ingredient} onClick={() => handleAddIngredient(ingredient)}>
+                {ingredient}
+              </Button>
+            ))
+          ) : (
+            <p>No ingredients found</p>
+          )}
         </div>
 
         <div className="mt-4">
@@ -61,6 +87,6 @@ const MealDialog = ({ open, onClose, mode }) => {
       </DialogContent>
     </Dialog>
   );
-}
+};
 
-export default MealDialog
+export default MealDialog;

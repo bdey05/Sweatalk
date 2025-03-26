@@ -108,6 +108,7 @@ def get_db_items():
         ig_info = {
             "id": ig.id,
             "meal_id": ig.meal_id,
+            "name": ig.name,
             "is_branded": ig.is_branded,
             "api_query": ig.api_query,
             "serving_qty": ig.serving_qty,
@@ -140,7 +141,7 @@ def insert_meal():
 #Helper route during development to insert an ingredient into the database
 @bp.route('/insertig')
 def insert_ingredient():
-    newIngredient = Ingredient(meal_id=1, is_branded=False, api_query="grape", serving_qty=2, serving_unit="fl oz")
+    newIngredient = Ingredient(meal_id=1, name="Grapes", is_branded=False, api_query="grape", serving_qty=2, serving_unit="fl oz")
     db.session.add(newIngredient)
     db.session.commit()
     return jsonify({'Success': 'Inserted Ingredient'})

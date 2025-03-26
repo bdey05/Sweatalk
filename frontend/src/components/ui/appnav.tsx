@@ -36,7 +36,7 @@ const AppNav = () => {
           <Sidebar className="border-sidebar-border">
           <SidebarHeader className="p-6">
             <div className="flex items-center gap-2 px-2">
-              <span className="text-4xl font-semibold text-primary"><Link to="/dashboard">Sweatalk</Link></span>
+              <span className="text-4xl font-semibold text-primary"><Link to="/mealplanner">Sweatalk</Link></span>
             </div>
           </SidebarHeader>
           <SidebarContent className="px-4">
