@@ -37,7 +37,6 @@ export type mealsForDate = {
 
 type MealState = {
     userMeals: mealsForDate[]
-    queryIngredients: (query: string) => Ingredient[] 
     addMeal: (meal: Meal, date: Date) => void
     removeMeal: (mealID: number) => void
     editMeal: (mealID: number, newMeal: Meal) => void
@@ -49,7 +48,5 @@ type MealState = {
 
 export const useMealStore = create<MealState>((set) => ({
     userMeals: [],
-    queryIngredients: async (query: string) => {
-        return await getIngredients(query) || [];
-    },
+    
 }))

@@ -97,8 +97,22 @@ def ingredients(current_user):
             *list(map(lambda food: food["brand_name_item_name"], data["branded"][:5])),
             *list(map(lambda food: food["food_name"], data["common"][:5]))
         ]
+        branded_food = data["branded"][:5]
+        common_food = data["common"][:5]
 
-        return jsonify(search_results), 200 
+        #return jsonify(search_results), 200 
     except requests.RequestException as e:
         return jsonify({'Error': 'Failed to communicate with API'}), 500
 
+    branded_data={}
+    for bf in branded_food:
+        try:
+            res = requests.get(NUTRITIONIX_BRANDED_URL, headers=headers, params={"nix_item_id": bf['nix_item_id']})
+            res.raise_for_status()
+            branded_data[bf['nix_item_id']] = res.json()
+            #return jsonify(data), 200
+        except requests.RequestException as e:
+            return jsonify({"Error: Could not access common endpoint"}), 500
+        
+    
+    return jsonify(branded_food), 200

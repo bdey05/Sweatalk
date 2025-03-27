@@ -27,7 +27,7 @@ export const getIngredients = async (query: string): Promise<Ingredient[]> => {
 
 export const useIngredients = (query: string) => {
     return useQuery<Ingredient[]>({
-        queryKey: ['ingredients'],
+        queryKey: ['ingredients', query],
         queryFn: () => getIngredients(query),
         enabled: !!query
     });

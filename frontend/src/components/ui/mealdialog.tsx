@@ -3,45 +3,19 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useMealStore } from "@/stores/mealstore";
+import { useIngredients } from "@/hooks/useIngredients";
 
 const MealDialog = ({ open, onClose, mode }) => {
   const [mealName, setMealName] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedIngredients, setSelectedIngredients] = useState([]);
-  const [ingredients, setingredients] = useState([]);
+ 
+  const { data: ingredients = [], isLoading, isError } = useIngredients(searchQuery);
 
-  const queryIngredients = useMealStore((state) => state.queryIngredients);
 
   const handleAddIngredient = (ingredient) => {
     setSelectedIngredients((prev) => [...prev, ingredient]);
   };
-  
-  useEffect(() => {
-    if (!open) {
-      setMealName("");
-      setSearchQuery("");
-      setSelectedIngredients([]);
-      setingredients([]);
-    }
-  }, [open]);
-  
-
-  useEffect(() => {
-    if (searchQuery.trim() === "") {
-      setingredients([]);
-      return;
-    }
-    const fetchIngredients = async () => {
-      try {
-        const ingredients = await queryIngredients(searchQuery);
-        setingredients(ingredients || []);
-      } catch (error) {
-        setingredients([]);
-      }
-    };
-  
-    fetchIngredients();
-  }, [searchQuery, queryIngredients]);
   
 
   return (
