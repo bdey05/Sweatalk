@@ -8,6 +8,8 @@ import MealCard from "@/components/ui/mealcard";
 import { useState } from "react";
 import MealList from "@/components/ui/meallist";
 import MealDialog from "@/components/ui/mealdialog";
+import { useIngredients } from "@/hooks/useIngredients";
+
 
 export const Route = createFileRoute("/mealplanner")({
   beforeLoad: async () => {
@@ -19,6 +21,9 @@ export const Route = createFileRoute("/mealplanner")({
 });
 
 function MealPlanner() {
+  const { data: ingredients = [], isLoading, isError } = useIngredients("burger");
+  console.log(ingredients)
+  
   const [meals, setMeals] = useState([
     {
       name: "Chicken Sandwich with Tomato Soup",

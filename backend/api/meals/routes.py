@@ -70,49 +70,93 @@ def meals():
     return jsonify(apiData), 200
     
 
+from flask import request, jsonify, current_app
+from api.meals import bp
+from api.helpers import token_required
+import requests
+
+
 @bp.route('/searchingredients', methods=['POST'])
 @token_required
 def ingredients(current_user):
     data = request.get_json()
-    NUTRITIONIX_INSTANT_URL=current_app.config.get('NUTRITIONIX_INSTANT_URL')
-    NUTRITIONIX_COMMON_URL=current_app.config.get('NUTRITIONIX_COMMON_URL')
-    NUTRITIONIX_BRANDED_URL=current_app.config.get('NUTRITIONIX_BRANDED_URL')
 
-    APP_ID=current_app.config.get('APP_ID')
-    APP_KEY=current_app.config.get('APP_KEY')
+    NUTRITIONIX_INSTANT_URL = current_app.config.get('NUTRITIONIX_INSTANT_URL')
+    NUTRITIONIX_COMMON_URL = current_app.config.get('NUTRITIONIX_COMMON_URL')
+    NUTRITIONIX_BRANDED_URL = current_app.config.get('NUTRITIONIX_BRANDED_URL')
+
+    APP_ID = current_app.config.get('APP_ID')
+    APP_KEY = current_app.config.get('APP_KEY')
 
     headers = {
         'Content-Type': 'application/json',
         'x-app-id': APP_ID,
         'x-app-key': APP_KEY
     }
-    params = {
-        "query": data["query"]
-    }
+
+    query = data.get("query")
+    if not query:
+        return jsonify({"error": "Query is required"}), 400
+
     try:
-        res = requests.get(NUTRITIONIX_INSTANT_URL, headers=headers, params=params)
+        res = requests.get(NUTRITIONIX_INSTANT_URL, headers=headers, params={"query": query})
         res.raise_for_status()
-        data = res.json()
-        search_results = [
-            *list(map(lambda food: food["brand_name_item_name"], data["branded"][:5])),
-            *list(map(lambda food: food["food_name"], data["common"][:5]))
-        ]
-        branded_food = data["branded"][:5]
-        common_food = data["common"][:5]
+        instant_data = res.json()
 
-        #return jsonify(search_results), 200 
+        branded_items = instant_data.get("branded", [])[:5]
+        common_items = instant_data.get("common", [])[:5]
     except requests.RequestException as e:
-        return jsonify({'Error': 'Failed to communicate with API'}), 500
+        return jsonify({'error': 'Failed to communicate with Nutritionix API'}), 500
 
-    branded_data={}
-    for bf in branded_food:
+    def extract_food_info(food_data, is_branded=False):
+        '''return {
+            "food_name": food_data.get("food_name") if not is_branded else food_data.get("brand_name_item_name"),
+            "nix_item_id": food_data.get("nix_item_id") if is_branded else None,
+            "calories": food_data.get("nf_calories") / food_data.get("serving_qty"),
+            "carbohydrates": food_data.get("nf_total_carbohydrate") / food_data.get("serving_qty"),
+            "protein": food_data.get("nf_protein") / food_data.get("serving_qty"),
+            "fat": food_data.get("nf_total_fat") / food_data.get("serving_qty"),
+            "serving_unit": food_data.get("serving_unit"),
+            "serving_quantity": food_data.get("serving_qty") / food_data.get("serving_qty"),
+            "alt_measures": food_data.get("alt_measures", [])
+        }'''
+        return {
+            "food_name": food_data.get("food_name"),
+            "nix_item_id": food_data.get("nix_item_id") if is_branded else None,
+            "calories": food_data.get("nf_calories") ,
+            "carbohydrates": food_data.get("nf_total_carbohydrate"),
+            "protein": food_data.get("nf_protein"),
+            "fat": food_data.get("nf_total_fat"),
+            "serving_unit": food_data.get("serving_unit"),
+            "serving_quantity": food_data.get("serving_qty"),
+            "alt_measures": food_data.get("alt_measures", [])
+        }
+
+    food_items = []
+
+    for common in common_items:
         try:
-            res = requests.get(NUTRITIONIX_BRANDED_URL, headers=headers, params={"nix_item_id": bf['nix_item_id']})
+            res = requests.post(NUTRITIONIX_COMMON_URL, headers=headers, json={"query": common["food_name"]})
             res.raise_for_status()
-            branded_data[bf['nix_item_id']] = res.json()
-            #return jsonify(data), 200
-        except requests.RequestException as e:
-            return jsonify({"Error: Could not access common endpoint"}), 500
-        
-    
-    return jsonify(branded_food), 200
+            common_details = res.json()
+            if common_details.get("foods"):
+                food_items.append(extract_food_info(common_details["foods"][0], is_branded=False))
+        except requests.RequestException:
+            continue
+
+    for branded in branded_items:
+        try:
+            res = requests.get(NUTRITIONIX_BRANDED_URL, headers=headers, params={"nix_item_id": branded["nix_item_id"]})
+            res.raise_for_status()
+            branded_details = res.json()
+            food_items.append(branded_details)
+            print(branded_details)
+
+            # Ensure correct handling of branded data
+            if "foods" in branded_details and branded_details["foods"]:
+                food_items.append(extract_food_info(branded_details["foods"][0], is_branded=True))
+        except requests.RequestException:
+            continue
+
+
+    return jsonify(food_items, branded_items), 200
