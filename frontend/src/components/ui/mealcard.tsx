@@ -1,10 +1,12 @@
 import React from 'react';
+import { useState } from "react";
 import { Plus, Trash2, Edit } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Toggle } from "@/components/ui/toggle";
 import IngredientItem from './ingredientitem';
 import { ServingUnit, Ingredient, Meal } from "@/stores/mealstore";
+import MealDialog from "@/components/ui/mealdialog";
 
 
 const MealCard: React.FC<Meal> = ({
@@ -20,6 +22,11 @@ const MealCard: React.FC<Meal> = ({
 
 }) => {
   
+   const [dialogOpen, setDialogOpen] = useState(false);
+  
+    const openDialog = (mode) => {
+      setDialogOpen(true);
+    };
 
   return (
     
@@ -96,6 +103,7 @@ const MealCard: React.FC<Meal> = ({
           <Button
             variant="outline"
             className="border border-input text-muted-foreground hover:text-primary hover:border-primary"
+            onClick={() => setDialogOpen(true)}
           >
             <Plus className="h-4 w-4 mr-2" />
             Add Ingredient
@@ -110,6 +118,11 @@ const MealCard: React.FC<Meal> = ({
           Delete Meal
         </Button>
       </CardFooter>
+      <MealDialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        mode="addIngredient"
+      />
     </Card>
   );
 };

@@ -128,7 +128,7 @@ function MealPlanner() {
               Add Existing Meal
             </Button>
           </div>
-          <div className="mt-6 space-y-4 w-full max-w-2xl lg:max-w-3xl flex flex-col items-center"> {/*<-- Increase max-width */}
+          <div className="mt-6 space-y-4 w-full max-w-2xl lg:max-w-3xl flex flex-col items-center"> 
             <MealList meals={meals} />
           </div>
         </main>
@@ -139,7 +139,7 @@ function MealPlanner() {
       <MealDialog
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
-        mode="add"
+        mode="addMeal"
       />
     </div>
   );
