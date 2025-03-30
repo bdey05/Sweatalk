@@ -109,10 +109,10 @@ def get_db_items():
             "id": ig.id,
             "meal_id": ig.meal_id,
             "name": ig.name,
-            "is_branded": ig.is_branded,
-            "api_query": ig.api_query,
-            "serving_qty": ig.serving_qty,
-            "serving_unit": ig.serving_unit,
+            "fdc_id": ig.fdc_id,
+            "selected_serving_qty": ig.selected_serving_qty,
+            "selected_serving_unit": ig.selected_serving_unit,
+            "available_units": ig.available_units
         }
         ingredientlist.append(ig_info)
     usermeals = UserMeal.query.all()
@@ -141,7 +141,12 @@ def insert_meal():
 #Helper route during development to insert an ingredient into the database
 @bp.route('/insertig')
 def insert_ingredient():
-    newIngredient = Ingredient(meal_id=1, name="Grapes", is_branded=False, api_query="grape", serving_qty=2, serving_unit="fl oz")
+    au = [
+        {"unit": "1 cup", "cal": 140, "pro": 50, "carbs": 43, "fats": 12},
+        {"unit": "1 lb", "cal": 120, "pro": 30, "carbs": 33, "fats": 15},
+        {"unit": "1 fl oz", "cal": 150, "pro": 40, "carbs": 23, "fats": 16}
+    ]
+    newIngredient = Ingredient(meal_id=1, name="Grapes", fdc_id=2157209, selected_serving_qty=2, selected_serving_unit="grams", available_units=au)
     db.session.add(newIngredient)
     db.session.commit()
     return jsonify({'Success': 'Inserted Ingredient'})

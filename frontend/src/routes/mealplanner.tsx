@@ -21,8 +21,8 @@ export const Route = createFileRoute("/mealplanner")({
 });
 
 function MealPlanner() {
-  const { data: ingredients = [], isLoading, isError } = useIngredients("burger");
-  console.log(ingredients)
+  //const { data: ingredients = [], isLoading, isError } = useIngredients("bread");
+  //console.log(ingredients)
   
   const [meals, setMeals] = useState([
     {

@@ -25,9 +25,9 @@ const RightSidebar = () => {
   const setWeekStart = useCalendarStore((state) => state.setWeekStart);
   const getToday = useCalendarStore((state) => state.getToday);
 
-  useEffect(() => {
+  /*useEffect(() => {
     console.log(date);
-  }, [date])
+  }, [date])*/
 
 
   return (

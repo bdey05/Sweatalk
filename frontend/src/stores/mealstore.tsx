@@ -2,18 +2,22 @@ import { getIngredients, useIngredients } from "@/hooks/useIngredients";
 import { create } from "zustand"; 
 
 
+type ServingUnit = {
+    unit: string 
+    calories: number
+    carbohydrates: number
+    fat: number
+    protein: number 
+}
+
 export type Ingredient = {
     ingredientID?: number
     associatedMealID: number
-    isBranded: boolean
-    apiQuery: string 
-    servingQty: number
-    servingUnit: number
+    fdcID: number,
+    selectedServingQty: number
+    selectedServingUnit: number
     name: string 
-    calories?: number
-    protein?: number
-    carbohydrates?: number
-    fat?: number
+    servingUnits: ServingUnit[]
 }
 
 export type Meal = {
@@ -40,7 +44,7 @@ type MealState = {
     addMeal: (meal: Meal, date: Date) => void
     removeMeal: (mealID: number) => void
     editMeal: (mealID: number, newMeal: Meal) => void
-    toggleSavedMeal: (meaLID: number) => void 
+    getMeal: () => void
     getSavedMeals: () => void
     getMealsForDate: (userID: number, date: Date) => Promise<void>;
 } 

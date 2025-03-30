@@ -13,7 +13,10 @@ class Config:
     NUTRITIONIX_INSTANT_URL = os.environ.get('NUTRITIONIX_INSTANT_URL')
     NUTRITIONIX_COMMON_URL = os.environ.get('NUTRITIONIX_COMMON_URL')
     NUTRITIONIX_BRANDED_URL = os.environ.get('NUTRITIONIX_BRANDED_URL')
-
+    
+    USDA_KEY = os.environ.get("USDA_KEY")
+    USDA_SEARCH_URL = os.environ.get("USDA_SEARCH_URL")
+    USDA_FOOD_DETAIL_URL = os.environ.get("USDA_FOOD_DETAIL_URL")
     
 
 class ConfigDevelopment(Config):

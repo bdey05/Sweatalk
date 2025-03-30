@@ -39,6 +39,7 @@ const MealDialog = ({ open, onClose, mode }) => {
         />
 
         <div className="mt-2 space-y-1">
+          {isLoading ? <div>Loading</div> : <div>Loaded</div>}
           {ingredients.length > 0 ? (
             ingredients.map((ingredient) => (
               <Button key={ingredient} onClick={() => handleAddIngredient(ingredient)}>
