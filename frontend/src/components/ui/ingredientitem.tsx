@@ -18,9 +18,9 @@ import { ServingUnit, Ingredient } from '@/stores/mealstore';
     fat
   }) => {
     return (
-      <div className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0 group">
+      <div className="flex items-center justify-between py-3 border-b border-muted-foreground last:border-0 group">
         <div className="flex items-center flex-1">
-          <div className="bg-gray-100 p-2 rounded-lg mr-3">
+          <div className="bg-border p-2 rounded-lg mr-3">
             <Utensils className="h-5 w-5 text-primary" />
           </div>
           <div className="flex-1">

@@ -26,28 +26,58 @@ function MealPlanner() {
 
   /*
     ToDo: 
-      1. Create list of user meals that contain list of ingredients
-      2. Pass this list of meals to the MealList and update props in MealList as necessary
-      3. Re-design modal for adding ingredients 
-      4. Re-design modal for editing ingredients
+      0. Re-design view for adding meal 
+      1. Re-design modal for adding ingredients 
+      2. Re-design modal for editing ingredients
+
   */
-  
-  const [meals, setMeals] = useState([
+
+  const suItem: ServingUnit = {
+    unit: "grams",
+    calories: 135,
+    carbohydrates: 23,
+    fat: 37,
+    protein: 22,
+  };
+  const item: Ingredient = {
+    associatedMealID: 123,
+    fdcID: 12,
+    selectedServingQty: 23,
+    selectedServingUnit: "grams",
+    name: "Chicken Breast",
+    servingUnits: [suItem],
+    calories: 365,
+    protein: 66,
+    carbohydrates: 69,
+    fat: 100,
+  };
+
+  const [meals, setMeals] = useState<Meal[]>([
     {
+      mealID: 123,
       name: "Chicken Sandwich with Tomato Soup",
       calories: 587,
       protein: 35,
       carbohydrates: 40,
       fat: 90,
-      isSaved: true
+      isSaved: true,
+      date: new Date(),
+      ingredients: [
+        item, item, item
+      ],
     },
     {
-      name: "Lasagna with Vegetables",
-      calories: 480,
-      protein: 35,
-      carbohydrates: 50,
-      fat: 40,
-      isSaved: false
+      mealID: 123,
+      name: "Grilled Salmon with Potatoes",
+      calories: 287,
+      protein: 45,
+      carbohydrates: 30,
+      fat: 120,
+      isSaved: true,
+      date: new Date(),
+      ingredients: [
+        item, item, item
+      ],
     },
   ]);
 
@@ -57,10 +87,18 @@ function MealPlanner() {
     setDialogOpen(true);
   };
 
-  let addMeal = () => {
-    let newMeal = {name: "cake", calories: 347, protein: 43, carbohydrates: 30, fat: 30, isSaved: true};
-    setMeals([...meals, newMeal]);
-  }
+  const addMeal = () => {
+    /*let newMeal = {
+      name: "cake",
+      calories: 347,
+      protein: 43,
+      carbohydrates: 30,
+      fat: 30,
+      isSaved: true,
+    };
+    setMeals([...meals, newMeal]);*/
+    return;
+  };
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
@@ -75,23 +113,34 @@ function MealPlanner() {
 
         <main className="flex flex-1 flex-col items-center overflow-auto p-6">
           <div className="flex gap-5">
-            <Button className="bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-3 shadow-lg flex items-center gap-2 transition-transform hover:scale-105" onClick={() => setDialogOpen(true)}>
+            <Button
+              className="bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-3 shadow-lg flex items-center gap-2 transition-transform hover:scale-105"
+              onClick={() => setDialogOpen(true)}
+            >
               <Plus className="w-5 h-5" />
               Add New Meal
             </Button>
-            <Button className="bg-secondary text-primary-foreground hover:bg-secondary/90 px-6 py-3 shadow-lg flex items-center gap-2 transition-transform hover:scale-105" onClick={addMeal}>
+            <Button
+              className="bg-secondary text-primary-foreground hover:bg-secondary/90 px-6 py-3 shadow-lg flex items-center gap-2 transition-transform hover:scale-105"
+              onClick={addMeal}
+            >
               <Plus className="w-5 h-5" />
               Add Existing Meal
             </Button>
           </div>
-          <MealList meals={meals} />
+          <div className="mt-6 space-y-4 w-full max-w-2xl lg:max-w-3xl flex flex-col items-center"> {/*<-- Increase max-width */}
+            <MealList meals={meals} />
+          </div>
         </main>
       </div>
       <div className="flex-shrink-0">
         <RightSidebar />
       </div>
-      <MealDialog open={dialogOpen} onClose={() => setDialogOpen(false)} mode="add" />
-
+      <MealDialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        mode="add"
+      />
     </div>
   );
 }

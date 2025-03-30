@@ -28,7 +28,7 @@ export type Meal = {
     mealID: number
     userID?: number 
     userMealId?: number 
-    title: string
+    name: string
     calories?: number
     protein?: number
     carbohydrates?: number
