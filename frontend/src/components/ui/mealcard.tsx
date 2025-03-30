@@ -3,10 +3,33 @@ import { Button } from "@/components/ui/button";
 import { Save, CheckCircle } from "lucide-react";
 import MealDialog from "./mealdialog";
 import { useState } from "react";
+import IngredientItem from "./ingredientitem";
+import { ServingUnit, Ingredient } from "@/stores/mealstore";
 
 const MealCard = ({ meal }) => {
   const [isSaved, setIsSaved] = useState(meal.isSaved);
   const [dialogOpen, setDialogOpen] = useState(false);
+
+
+  const suItem: ServingUnit = {
+    unit: "grams",
+    calories: 135,
+    carbohydrates: 23,
+    fat: 37,
+    protein: 22
+  }
+  const item: Ingredient = {
+    associatedMealID: 123,
+    fdcID: 12,
+    selectedServingQty: 23,
+    selectedServingUnit: "grams",
+    name: "Chicken Breast",
+    servingUnits: [suItem],
+    calories: 365, 
+    protein: 66,
+    carbohydrates: 69,
+    fat: 100
+  }
 
   const openDialog = (mode) => {
     setDialogOpen(true);
@@ -25,6 +48,7 @@ const MealCard = ({ meal }) => {
             onClick={toggleSave}
           >
             {isSaved ? <CheckCircle /> : <Save />}
+            
           </Button>
         </CardTitle>
       </CardHeader>
@@ -57,6 +81,7 @@ const MealCard = ({ meal }) => {
             Delete Meal
           </Button>
         </div>
+        <IngredientItem {...item}/>
       </CardContent>
       <MealDialog open={dialogOpen} onClose={() => setDialogOpen(false)} mode="edit" />
     </Card>

@@ -2,7 +2,7 @@ import { getIngredients, useIngredients } from "@/hooks/useIngredients";
 import { create } from "zustand"; 
 
 
-type ServingUnit = {
+export type ServingUnit = {
     unit: string 
     calories: number
     carbohydrates: number
@@ -15,32 +15,32 @@ export type Ingredient = {
     associatedMealID: number
     fdcID: number,
     selectedServingQty: number
-    selectedServingUnit: number
+    selectedServingUnit: string
     name: string 
     servingUnits: ServingUnit[]
+    calories?: number
+    protein?: number
+    carbohydrates?: number
+    fat?: number
 }
 
 export type Meal = {
     mealID: number
+    userID?: number 
+    userMealId?: number 
     title: string
-    calories: number
-    protein: number
-    carbohydrates: number
-    fat: number
+    calories?: number
+    protein?: number
+    carbohydrates?: number
+    fat?: number
     isSaved: boolean
+    date: Date
     ingredients: Ingredient[]
 }
 
-export type mealsForDate = {
-    //mealDateID: number
-    userID: number
-    mealID: number
-    servingQty: number
-    date: Date
-}
 
 type MealState = {
-    userMeals: mealsForDate[]
+    userMeals: Meal[]
     addMeal: (meal: Meal, date: Date) => void
     removeMeal: (mealID: number) => void
     editMeal: (mealID: number, newMeal: Meal) => void

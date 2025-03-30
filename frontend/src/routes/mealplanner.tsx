@@ -9,7 +9,7 @@ import { useState } from "react";
 import MealList from "@/components/ui/meallist";
 import MealDialog from "@/components/ui/mealdialog";
 import { useIngredients } from "@/hooks/useIngredients";
-
+import { ServingUnit, Ingredient, Meal } from "@/stores/mealstore";
 
 export const Route = createFileRoute("/mealplanner")({
   beforeLoad: async () => {
@@ -23,6 +23,14 @@ export const Route = createFileRoute("/mealplanner")({
 function MealPlanner() {
   //const { data: ingredients = [], isLoading, isError } = useIngredients("bread");
   //console.log(ingredients)
+
+  /*
+    ToDo: 
+      1. Create list of user meals that contain list of ingredients
+      2. Pass this list of meals to the MealList and update props in MealList as necessary
+      3. Re-design modal for adding ingredients 
+      4. Re-design modal for editing ingredients
+  */
   
   const [meals, setMeals] = useState([
     {
