@@ -64,6 +64,10 @@ def logout(current_user):
     db.session.commit()
     return jsonify({'message': 'Successfully logged out'}), 200
 
+
+
+
+
 #Helper route during development to get all DB contents
 @bp.route('/getdb')
 def get_db_items():
@@ -90,31 +94,11 @@ def get_db_items():
     allMeals = Meal.query.all()
     meallist = []
     for meal in allMeals:
-        meal_info = {
-            "id": meal.id,
-            "name": meal.name,
-            "calories": meal.calories,
-            "protein": meal.protein,
-            "carbohydrates": meal.carbohydrates,
-            "fat": meal.fat,
-            "serving_qty": meal.serving_qty,
-            "is_saved": meal.is_saved,
-            #"ig": meal.ingredients[0].api_query
-        }
-        meallist.append(meal_info)
+        meallist.append(meal.to_dict())
     ingredients = Ingredient.query.all()
     ingredientlist = []
     for ig in ingredients:
-        ig_info = {
-            "id": ig.id,
-            "meal_id": ig.meal_id,
-            "name": ig.name,
-            "fdc_id": ig.fdc_id,
-            "selected_serving_qty": ig.selected_serving_qty,
-            "selected_serving_unit": ig.selected_serving_unit,
-            "available_units": ig.available_units
-        }
-        ingredientlist.append(ig_info)
+        ingredientlist.append(ig.to_dict())
     usermeals = UserMeal.query.all()
     umlist = []
     for um in usermeals:

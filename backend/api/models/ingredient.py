@@ -18,7 +18,16 @@ class Ingredient(db.Model):
     meal = db.relationship('Meal', back_populates='ingredients')
     
     
-    
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "meal_id": self.meal_id,
+            "fdc_id": self.fdc_id,
+            "selected_serving_unit": self.selected_serving_unit,
+            "selected_serving_qty": self.selected_serving_qty,
+            "available_units": self.available_units 
+        }
     
     
 

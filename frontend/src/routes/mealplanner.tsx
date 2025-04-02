@@ -5,11 +5,14 @@ import WeekNav from "@/components/ui/weeknav";
 import { Button } from "@/components/ui/button";
 import { Plus, Save } from "lucide-react";
 import MealCard from "@/components/ui/mealcard";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MealList from "@/components/ui/meallist";
 import MealDialog from "@/components/ui/mealdialog";
 import { useIngredients } from "@/hooks/useIngredients";
 import { ServingUnit, Ingredient, Meal } from "@/stores/mealstore";
+import { useCalendarStore } from "@/stores/calendarstore";
+import { useGetMeals } from "@/hooks/useGetMeals";
+import { useAddMeal } from "@/hooks/useAddMeal";
 
 export const Route = createFileRoute("/mealplanner")({
   beforeLoad: async () => {
@@ -22,15 +25,16 @@ export const Route = createFileRoute("/mealplanner")({
 
 function MealPlanner() {
   //const { data: ingredients = [], isLoading, isError } = useIngredients("bread");
-  //console.log(ingredients)
 
-  /*
-    ToDo: 
-      0. Re-design view for adding meal 
-      1. Re-design modal for adding ingredients 
-      2. Re-design modal for editing ingredients
+  const date = useCalendarStore((state) => state.date)
 
-  */
+  const { data: userMeals = [], isLoading, isError} = useGetMeals(date.toISOString().split('T')[0])
+
+  useEffect(() => {
+    console.log(date.toISOString().split('T')[0])
+  }, [date])
+
+
 
   const suItem: ServingUnit = {
     unit: "grams",
@@ -80,6 +84,22 @@ function MealPlanner() {
       ],
     },
   ]);
+
+  const testMeal = {
+    name: "Grilled Salmon with Potatoes",
+      calories: 287,
+      protein: 45,
+      carbohydrates: 30,
+      fat: 120,
+      isSaved: true,
+      ingredients: [
+        item, item, item
+      ],
+      serving_qty: 1
+  }
+
+  //const { mutate, checkError, error} = useAddMeal(testMeal, date.toISOString().split('T')[0]); 
+  
 
   const [dialogOpen, setDialogOpen] = useState(false);
 

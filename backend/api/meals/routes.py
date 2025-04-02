@@ -5,6 +5,12 @@ from api.models.revokedtoken import RevokedToken
 from api.helpers import token_required
 from api import db
 import requests
+from api.models.usermodel import AppUser
+from api.models.meal import Meal
+from api.models.usermeal import UserMeal
+from api.models.ingredient import Ingredient
+from sqlalchemy.orm import joinedload
+from datetime import datetime
 
 
 NUTRIENT_ID_CALORIES = "208"
@@ -154,14 +160,50 @@ def get_meal(current_user):
 @bp.route("/getmeals", methods=["POST"])
 @token_required
 def get_meals(current_user):
-    pass
+    search_data = request.get_json()
+    date = datetime.strptime(search_data.get("date"), '%Y-%m-%d').date()
+    user_meals = db.session.query(UserMeal).options(
+        joinedload(UserMeal.meal).joinedload(Meal.ingredients)
+    ).filter(
+        UserMeal.user_id == current_user.id,
+        UserMeal.date == date
+    ).all()
 
-@bp.route("/deletemeal", methods=["POST"])
+    meals_list = [um.meal.to_dict() for um in user_meals if um.meal]
+
+    return jsonify(meals_list), 200
+
+    
+@bp.route("/addmeal", methods=["POST"])
+@token_required
+def add_meal(current_user):
+    req_data = request.get_json()
+    meal_info = req_data["meal"]
+    meal_date = datetime.strptime(req_data["date"], '%Y-%m-%d').date()
+
+    newMeal = Meal(
+        name=meal_info["name"], 
+        calories=meal_info["calories"],
+        protein=meal_info["protein"],
+        carbohydrates=meal_info["carbohydrates"],
+        fat=meal_info["fat"],
+        serving_qty=meal_info["serving_qty"],
+        is_saved=meal_info["is_saved"]
+    )
+
+    db.session.add(newMeal)
+    db.session.commit()
+
+    return jsonify({"New Meal ID": newMeal.id}), 200 
+
+
+
+@bp.route("/deletemeal", methods=["DELETE"])
 @token_required
 def delete_meal(current_user):
     pass
 
-@bp.route("/editmeal", methods=["POST"])
+@bp.route("/editmeal", methods=["PUT"])
 @token_required
 def edit_meal(current_user):
     pass

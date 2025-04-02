@@ -17,4 +17,15 @@ class Meal(db.Model):
     ingredients = db.relationship('Ingredient', back_populates='meal')
     user_meals = db.relationship('UserMeal', back_populates='meal')
     
-    
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "calories": self.calories,
+            "protein": self.protein,
+            "carbohydrates": self.carbohydrates,
+            "fat": self.fat,
+            "serving_qty": self.serving_qty,
+            "is_saved": self.is_saved,
+            "ingredients": [ing.to_dict() for ing in self.ingredients]
+        }
