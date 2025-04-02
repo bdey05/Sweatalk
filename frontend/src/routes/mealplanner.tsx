@@ -44,7 +44,6 @@ function MealPlanner() {
     protein: 22,
   };
   const item: Ingredient = {
-    associatedMealID: 123,
     fdcID: 12,
     selectedServingQty: 23,
     selectedServingUnit: "grams",
@@ -65,10 +64,10 @@ function MealPlanner() {
       carbohydrates: 40,
       fat: 90,
       isSaved: true,
-      date: new Date(),
       ingredients: [
         item, item, item
       ],
+      servingQty: 1
     },
     {
       mealID: 123,
@@ -78,14 +77,14 @@ function MealPlanner() {
       carbohydrates: 30,
       fat: 120,
       isSaved: true,
-      date: new Date(),
       ingredients: [
         item, item, item
       ],
+      servingQty: 2
     },
   ]);
 
-  const testMeal = {
+  const testMeal: Meal = {
     name: "Grilled Salmon with Potatoes",
       calories: 287,
       protein: 45,
@@ -95,11 +94,13 @@ function MealPlanner() {
       ingredients: [
         item, item, item
       ],
-      serving_qty: 1
+      servingQty: 1
   }
 
-  //const { mutate, checkError, error} = useAddMeal(testMeal, date.toISOString().split('T')[0]); 
-  
+  const mutation = useAddMeal(); 
+  const handleAdd = () => {
+    mutation.mutate({meal: testMeal, date: date.toISOString().split('T')[0]});
+  }
 
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -142,7 +143,7 @@ function MealPlanner() {
             </Button>
             <Button
               className="bg-secondary text-primary-foreground hover:bg-secondary/90 px-6 py-3 shadow-lg flex items-center gap-2 transition-transform hover:scale-105"
-              onClick={addMeal}
+              onClick={handleAdd}
             >
               <Plus className="w-5 h-5" />
               Add Existing Meal

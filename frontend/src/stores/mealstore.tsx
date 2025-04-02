@@ -12,7 +12,7 @@ export type ServingUnit = {
 
 export type Ingredient = {
     ingredientID?: number
-    associatedMealID: number
+    mealID?: number
     fdcID: number,
     selectedServingQty: number
     selectedServingUnit: string
@@ -25,16 +25,14 @@ export type Ingredient = {
 }
 
 export type Meal = {
-    mealID: number
-    userID?: number 
-    userMealId?: number 
+    mealID?: number
     name: string
-    calories?: number
-    protein?: number
-    carbohydrates?: number
-    fat?: number
+    calories: number
+    protein: number
+    carbohydrates: number
+    fat: number
+    servingQty: number
     isSaved: boolean
-    date: Date
     ingredients: Ingredient[]
 }
 

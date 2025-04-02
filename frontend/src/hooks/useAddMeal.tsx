@@ -1,7 +1,13 @@
 import { QueryClient, useMutation, useQueryClient } from "@tanstack/react-query"
 import { Meal, Ingredient } from "@/stores/mealstore"
 
-export const addMeal = async (meal: Meal, date: string): Promise<string> => {
+interface MealDate {
+    meal: Meal;
+    date: string;
+}
+
+export const addMeal = async (mealToAdd: MealDate): Promise<string> => {
+    const {meal, date} = mealToAdd;
     if (!date) return "Date is missing for the meal";
     try {
         const res = await fetch("http://localhost:5000/addmeal", {
@@ -25,16 +31,16 @@ export const addMeal = async (meal: Meal, date: string): Promise<string> => {
 
 }
 
-export const useAddMeal = (meal: Meal, date: string) => {
+export const useAddMeal = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: () => addMeal(meal, date),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['meals', date] })
+        mutationFn: addMeal,
+        onSuccess: (data, variables) => {
+            queryClient.invalidateQueries({ queryKey: ['meals', variables.date] })
         },
         onError: (error) => {
-            console.error("Failed mutation: ", error);
+            console.error("Failed to add meal: ", error);
         }
     })
 }

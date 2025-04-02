@@ -10,7 +10,7 @@ from api.models.meal import Meal
 from api.models.usermeal import UserMeal
 from api.models.ingredient import Ingredient
 from sqlalchemy.orm import joinedload
-from datetime import datetime
+from datetime import datetime, date
 
 
 NUTRIENT_ID_CALORIES = "208"
@@ -187,14 +187,39 @@ def add_meal(current_user):
         protein=meal_info["protein"],
         carbohydrates=meal_info["carbohydrates"],
         fat=meal_info["fat"],
-        serving_qty=meal_info["serving_qty"],
-        is_saved=meal_info["is_saved"]
+        serving_qty=meal_info["servingQty"],
+        is_saved=meal_info["isSaved"]
     )
 
     db.session.add(newMeal)
     db.session.commit()
 
-    return jsonify({"New Meal ID": newMeal.id}), 200 
+    mealIngredients = meal_info["ingredients"]
+
+    for ig in mealIngredients:
+        meal_units = []
+        for aU in ig["servingUnits"]:
+            meal_units.append(aU)
+        newIngredient = Ingredient (
+            name=ig["name"],
+            meal_id=newMeal.id,
+            fdc_id=ig["fdcID"],
+            selected_serving_unit=ig["selectedServingUnit"],
+            selected_serving_qty=ig["selectedServingQty"],
+            available_units=meal_units
+        )
+        db.session.add(newIngredient)
+        db.session.commit()
+
+    newUserMeal = UserMeal (
+        user_id=current_user.id,
+        meal_id=newMeal.id,
+        date=meal_date
+    )
+    db.session.add(newUserMeal)
+    db.session.commit()
+
+    return jsonify({"New User Meal": newUserMeal.to_dict()}), 200 
 
 
 

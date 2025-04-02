@@ -33,7 +33,15 @@ class AppUser(db.Model):
     def __repr__(self):
         return f'<User {self.username}>'
     
-    
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "username": self.username,
+            "email": self.email,
+            "age": self.age,
+            "weight": self.weight,
+            "height": self.height
+        }
     
     
 
