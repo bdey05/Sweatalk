@@ -16,8 +16,8 @@ export const getIngredients = async (query: string): Promise<Ingredient[]> => {
             throw new Error("Failed to reach endpoint")
         }
         const data = await res.json();
-        console.log(data);
-        return data;
+        console.log(data["items"]);
+        return data["items"];
     }
     catch (error) {
         console.log(error.message)
@@ -29,6 +29,6 @@ export const useIngredients = (query: string) => {
     return useQuery<Ingredient[]>({
         queryKey: ['ingredients', query],
         queryFn: () => getIngredients(query),
-        enabled: !!query
+        enabled: query.trim().length > 1
     });
 }
