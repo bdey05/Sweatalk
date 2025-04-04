@@ -145,11 +145,11 @@ def insert_umeal():
 
 #Helper route during development to clear all database tables
 @bp.route('/cleardb')
-def clear_db():   
+def clear_db(): 
+    UserMeal.query.delete()
+    Ingredient.query.delete()
+    Meal.query.delete()
     AppUser.query.delete()
     RevokedToken.query.delete()
-    Meal.query.delete()
-    Ingredient.query.delete()
-    UserMeal.query.delete()
     db.session.commit()
     return jsonify({'Clear': 'Database cleared'})

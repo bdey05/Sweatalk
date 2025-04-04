@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Dialog,
   DialogContent,
@@ -21,14 +21,26 @@ import {
 import { Label } from "@/components/ui/label";
 import { X, Trash2, Plus, Loader2 } from "lucide-react";
 import { useIngredients } from "@/hooks/useIngredients";
-import { Ingredient } from "@/stores/mealstore";
+import { ServingUnit, Ingredient, Meal } from "@/stores/mealstore";
+import { useCalendarStore } from "@/stores/calendarstore";
+import { useAddMeal } from "@/hooks/useAddMeal";
 
-interface MealDialogProps {
+type MealDialogProps = {
   open: boolean;
   onClose: () => void;
   mode: "addMeal" | "addIngredient";
   mealId?: number;
 }
+
+type SelectedIngredient = {
+  fdcId: number    
+  name: string     
+  selectedServingQty: number
+  selectedServingUnit: string
+  servingUnits: ServingUnit[]
+  selectedServingUnitInfo?: ServingUnit
+}
+
 
 const MealDialog: React.FC<MealDialogProps> = ({
   open,
@@ -39,7 +51,9 @@ const MealDialog: React.FC<MealDialogProps> = ({
   const [title, setTitle] = useState<string>("");
   const [query, setQuery] = useState<string>("");
   const [debouncedQuery, setDebouncedQuery] = useState<string>(query);
-  const [selectedIngredients, setSelectedIngredients] = useState([]);
+  const [selectedIngredients, setSelectedIngredients] = useState<SelectedIngredient[]>([]);
+  const date = useCalendarStore((state) => state.date);
+  const mutation = useAddMeal();
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -54,6 +68,91 @@ const MealDialog: React.FC<MealDialogProps> = ({
   useEffect(() => {
     console.log(selectedIngredients);
   }, [selectedIngredients]);
+
+  const handleAddItem = (ing) => {
+    const newIngredient: SelectedIngredient = {
+      fdcId: ing.fdcId, 
+      name: ing.name, 
+      selectedServingQty: 1, 
+      selectedServingUnit: ing.servings[0].unit,
+      servingUnits: ing.servings,
+      selectedServingUnitInfo: ing.servings[0] 
+    }
+    setSelectedIngredients(prevIngredients => [...prevIngredients, newIngredient]);
+  }
+
+  const handleUnselect = (selectedID) => {
+    setSelectedIngredients(currentIngredients => currentIngredients.filter(s => s.fdcId !== selectedID));
+  }
+
+  const handleUnitChange = (id, newUnit) => {
+    setSelectedIngredients(currentItems => 
+      currentItems.map(item => {
+        if (item.fdcId === id)
+        {
+          const newServingInfo = item.servingUnits.find(unitInfo => unitInfo.unit === newUnit);
+          return {
+            ...item,
+            selectedServingUnit: newUnit,
+            selectedServingUnitInfo: newServingInfo
+          }
+        }
+        return item;
+      })
+    )
+  }
+
+  const handleQuantityChange = (id, newQuantity) => {
+    setSelectedIngredients(currentItems => 
+      currentItems.map(item =>
+        item.fdcId === id ? 
+        {...item, selectedServingQty: newQuantity}
+        : item
+      )
+    )
+  }
+
+  const validateFields = useMemo(() => {
+    if (selectedIngredients.length === 0)
+    {
+      return false;
+    }
+    if (mode === "addMeal" && title.trim() === "")
+    {
+      return false;
+    }
+    return selectedIngredients.every(sig => {
+      const quantityValid = sig.selectedServingQty > 0;
+      return quantityValid;
+    })
+  }, [selectedIngredients, title, mode]);
+
+  const handleSave = () => {
+    if (mode === "addMeal")
+    {
+      const newMeal: Meal = {
+        name: title,
+        calories: 300,
+        protein: 300,
+        carbohydrates: 200,
+        fat: 120,
+        isSaved: false, 
+        ingredients: selectedIngredients, 
+        servingQty: 1
+      }
+      mutation.mutate({meal: newMeal, date: date.toISOString().split('T')[0]});
+    }
+  }
+
+
+  useEffect(() => {
+    if (!open) {
+        setTitle("");
+        setQuery("");
+        setDebouncedQuery("");
+        setSelectedIngredients([]);
+    }
+  }, [open]);
 
   const {
     data: ingredients = [],
@@ -126,12 +225,10 @@ const MealDialog: React.FC<MealDialogProps> = ({
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() =>
-                            setSelectedIngredients([...selectedIngredients, ig])
-                          }
-                          /*disabled={selectedIngredients.some(
-                            (sel) => sel.fdcID === ig.fdcID
-                          )}*/
+                          onClick={() => handleAddItem(ig)}
+                          disabled={selectedIngredients.some(
+                            (sel) => sel.fdcId === ig.fdcId
+                          )}
                         >
                           <Plus className="h-4 w-4 mr-1" /> Add
                         </Button>
@@ -156,8 +253,8 @@ const MealDialog: React.FC<MealDialogProps> = ({
               )}
       
               {selectedIngredients.length > 0 && 
-              selectedIngredients.map((sig, idx) => (
-                  <div key={idx} className="space-y-3 mt-2">
+              selectedIngredients.map((sig) => (
+                  <div key={sig.fdcId} className="space-y-3 mt-2">
                     <div className="p-3 border rounded-md space-y-2 bg-background">
                       
     
@@ -169,7 +266,7 @@ const MealDialog: React.FC<MealDialogProps> = ({
                             variant="ghost"
                             size="icon"
                             className="h-6 w-6 text-muted-foreground hover:text-destructive"
-                            onClick={() => setSelectedIngredients(selectedIngredients.filter(s => s.fdcID !== sig.fdcID))}
+                            onClick={() => handleUnselect(sig.fdcId)}
                           >
                             <Trash2 className="h-4 w-4" />
                             <span className="sr-only">Remove Item</span>
@@ -178,32 +275,36 @@ const MealDialog: React.FC<MealDialogProps> = ({
                       
                       <div className="flex items-end gap-2">
                         <div className="flex-1 min-w-0">
-                          <Label htmlFor={`qty-sample`} className="text-xs">
+                          <Label htmlFor="qty" className="text-xs">
                             Quantity
                           </Label>
                           <Input
-                            id={`qty-sample`}
+                            id="qty"
                             type="number"
                             min="0"
                             step="0.1"
                             className="h-8 text-sm"
-                            defaultValue="1"
+                            value={sig.selectedServingQty}
+                            onChange={(e) => handleQuantityChange(sig.fdcId, e.target.value)}
                           />
                         </div>
     
                         <div className="flex-1 min-w-0">
-                          <Label htmlFor={`unit-sample`} className="text-xs">
+                          <Label htmlFor="unit" className="text-xs">
                             Unit
                           </Label>
-                          <Select>
+                          <Select
+                            value={sig.selectedServingUnit}
+                            onValueChange={(newUnit) => handleUnitChange(sig.fdcId, newUnit)}
+                          >
                             <SelectTrigger
-                              id={`unit-sample`}
+                              id="unit"
                               className="h-8 text-sm"
                             >
                               <SelectValue placeholder="Select unit" />
                             </SelectTrigger>
                             <SelectContent>
-                            {sig?.servings.map((sigServ, idx) => (
+                            {sig?.servingUnits.map((sigServ, idx) => (
                               <SelectItem value={sigServ.unit} className="text-sm">
                                 {sigServ.unit}
                               </SelectItem>
@@ -225,7 +326,9 @@ const MealDialog: React.FC<MealDialogProps> = ({
               Cancel
             </Button>
           </DialogClose>
-          <Button type="button">Save Meal / Add Ingredients</Button>
+          <Button type="button" onClick={handleSave} disabled={!validateFields}>
+            {mode === "addMeal" ? "Save Meal" : "Add Ingredients"}
+            </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

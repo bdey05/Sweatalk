@@ -13,7 +13,7 @@ export type ServingUnit = {
 export type Ingredient = {
     ingredientID?: number
     mealID?: number
-    fdcID: number,
+    fdcId: number,
     selectedServingQty: number
     selectedServingUnit: string
     name: string 

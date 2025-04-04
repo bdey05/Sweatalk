@@ -203,7 +203,7 @@ def add_meal(current_user):
         newIngredient = Ingredient (
             name=ig["name"],
             meal_id=newMeal.id,
-            fdc_id=ig["fdcID"],
+            fdc_id=ig["fdcId"],
             selected_serving_unit=ig["selectedServingUnit"],
             selected_serving_qty=ig["selectedServingQty"],
             available_units=meal_units
