@@ -30,9 +30,8 @@ def create_app(config_class=ConfigDevelopment):
         try:
             #db.drop_all()
             db.create_all()
-            print("Success")
         except:
-            print("Error")
+            print("Error creating database tables")
     
     from api.auth import bp as authbp
     app.register_blueprint(authbp)

@@ -1,4 +1,3 @@
-import { getIngredients, useIngredients } from "@/hooks/useIngredients";
 import { create } from "zustand"; 
 
 
@@ -37,7 +36,7 @@ export type Meal = {
 }
 
 
-type MealState = {
+/*type MealState = {
     userMeals: Meal[]
     addMeal: (meal: Meal, date: Date) => void
     removeMeal: (mealID: number) => void
@@ -51,4 +50,4 @@ type MealState = {
 export const useMealStore = create<MealState>((set) => ({
     userMeals: [],
     
-}))
+}))*/

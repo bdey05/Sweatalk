@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { Plus, Trash2, Edit } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { Toggle } from "@/components/ui/toggle";
 import IngredientItem from './ingredientitem';
 import { ServingUnit, Ingredient, Meal } from "@/stores/mealstore";
 import MealDialog from "@/components/ui/mealdialog";
+import { useUpdateMeal } from '@/hooks/useUpdateMeal';
 
 export const ingredientNutrition = (ing) => {
   const selectedUnit = ing?.available_units.find(selIng => selIng.unit === ing.selected_serving_unit);
@@ -20,7 +21,7 @@ export const ingredientNutrition = (ing) => {
 }
 
 const MealCard: React.FC<Meal> = ({
-  mealID,
+  id,
   name,
   calories, 
   protein,
@@ -36,6 +37,7 @@ const MealCard: React.FC<Meal> = ({
    const [dialogOpen, setDialogOpen] = useState(false);
    const [mealName, setMealName] = useState(name);
    const [ingredientsList, setIngredientsList] = useState(ingredients);
+   const updateMutation = useUpdateMeal();
 
     useEffect(() => {
         setMealName(name); 
@@ -71,28 +73,61 @@ const MealCard: React.FC<Meal> = ({
         }
       }, [ingredientsList]);
 
+
+      const handleMutation = useCallback((updatedIngredients: Ingredient[], newMealName: string) => {
+        const updatedMeal = {
+          name: newMealName,
+          id: id, 
+          calories: mealNutrition.calories,
+          protein: mealNutrition.protein,
+          carbohydrates: mealNutrition.carbohydrates,
+          fat: mealNutrition.fat,
+          isSaved: false,
+          ingredients: updatedIngredients,
+          servingQty: 1
+        }
+        updateMutation.mutate(updatedMeal);
+      }, [id, mealNutrition.calories, mealNutrition.carbohydrates, mealNutrition.protein, mealNutrition.fat, updateMutation]);
+
       const handleNameChange = () => {
           const trimmedName = mealName.trim();
           if (trimmedName && trimmedName !== name)
           {
-            console.log("Will update database");
-            const updatedMeal = {
-              name: mealName,
-              calories: mealNutrition.calories,
-              protein: mealNutrition.protein,
-              carbohydrates: mealNutrition.carbohydrates,
-              fat: mealNutrition.fat,
-              isSaved: false,
-              ingredients: ingredientsList,
-              servingQty: 1
-            }
+            handleMutation(ingredientsList, mealName);
           }
           else 
           {
             setMealName(name);
           } 
       }
+    
+    const handleQuantityChange = useCallback((id: number, newQuantity: number) => {
+      const newIngredientsList = ingredientsList.map(ing => {
+        if (ing.id === id)
+        {
+          return { ...ing, selected_serving_qty: newQuantity};
+        }
+        return ing;
+      });
+      setIngredientsList(newIngredientsList);
+      handleMutation(newIngredientsList, mealName);
+    }, [ingredientsList, mealName, handleMutation]);
 
+    const handleUnitChange = useCallback((id: number, newUnit: string) => {
+      const newIngredientsList = ingredientsList.map(ing => {
+        if (ing.id === id)
+        {
+          return { ...ing, selected_serving_unit: newUnit};
+        }
+        return ing;
+      });
+      setIngredientsList(newIngredientsList);
+      handleMutation(newIngredientsList, mealName);
+    }, [ingredientsList, mealName, handleMutation]);
+
+    const handleIngredientDelete = useCallback((id: number) => {
+      return;
+    }, []);
 
   return (
     
@@ -153,6 +188,9 @@ const MealCard: React.FC<Meal> = ({
               <IngredientItem
                key={ing.id}
                ingredient={ing}
+               onQuantityChange={handleQuantityChange}
+               onUnitChange={handleUnitChange}
+               onDelete={handleIngredientDelete}
               />
             ))}
           </div>
@@ -167,7 +205,7 @@ const MealCard: React.FC<Meal> = ({
         <div className="flex space-x-2">
           <Button
             variant="outline"
-            className="border border-input text-muted-foreground hover:text-primary hover:border-primary"
+            className="border border-input text-muted-foreground"
             onClick={() => setDialogOpen(true)}
           >
             <Plus className="h-4 w-4 mr-2" />

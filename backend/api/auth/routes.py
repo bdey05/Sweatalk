@@ -67,7 +67,6 @@ def logout(current_user):
 
 
 
-
 #Helper route during development to get all DB contents
 @bp.route('/getdb')
 def get_db_items():
@@ -107,42 +106,10 @@ def get_db_items():
             "meal_id": um.meal_id,
             "user_id": um.user_id,
             "date": um.date
-            #"assoc_user": um.user.username,
-            #"assoc_meal": um.meal.name
         }
         umlist.append(um_info)
     return jsonify({'users': userList, 'revokedTokens': rtlist, 'meals': meallist, 'ingredients': ingredientlist, 'usermeals': umlist})
-
-
-#Helper route during development to insert a meal into the database
-@bp.route('/insertmeal')
-def insert_meal():
-    newMeal = Meal(name="Chicken Sandwich", calories=350, protein=24, carbohydrates=75, fat=20, serving_qty=1.5, is_saved=False)
-    db.session.add(newMeal)
-    db.session.commit()
-    return jsonify({'Success': 'Inserted Meal'})
-
-#Helper route during development to insert an ingredient into the database
-@bp.route('/insertig')
-def insert_ingredient():
-    au = [
-        {"unit": "1 cup", "cal": 140, "pro": 50, "carbs": 43, "fats": 12},
-        {"unit": "1 lb", "cal": 120, "pro": 30, "carbs": 33, "fats": 15},
-        {"unit": "1 fl oz", "cal": 150, "pro": 40, "carbs": 23, "fats": 16}
-    ]
-    newIngredient = Ingredient(meal_id=1, name="Grapes", fdc_id=2157209, selected_serving_qty=2, selected_serving_unit="grams", available_units=au)
-    db.session.add(newIngredient)
-    db.session.commit()
-    return jsonify({'Success': 'Inserted Ingredient'})
-
-#Helper route during development to insert a usermeal into the database
-@bp.route('/insertum')
-def insert_umeal():
-    newUM = UserMeal(user_id=1, meal_id=1, date=date.today())
-    db.session.add(newUM)
-    db.session.commit()
-    return jsonify({'Success': 'Inserted User Meal'})
-
+    
 #Helper route during development to clear all database tables
 @bp.route('/cleardb')
 def clear_db(): 

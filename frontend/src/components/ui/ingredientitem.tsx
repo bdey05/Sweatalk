@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Utensils, Trash2, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,17 +6,47 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ServingUnit, Ingredient } from '@/stores/mealstore';
 import { ingredientNutrition } from './mealcard';
     
-  const IngredientItem: React.FC<Ingredient> = ({
-    ingredient
+type IngredientItemProps = {
+  ingredient: Ingredient;
+  onQuantityChange: (id: number, newQuantity: number) => void; 
+  onUnitChange: (id: number, newUnit: string) => void;
+  onDelete: (id: number) => void;
+}
+
+  const IngredientItem: React.FC<IngredientItemProps> = ({
+    ingredient,
+    onQuantityChange,
+    onUnitChange,
+    onDelete
   }) => {
 
+    const [qty, setQty] = useState(ingredient.selected_serving_qty);
+    const [unit, setUnit] = useState(ingredient.selected_serving_unit);
+
+
+    useEffect(() => {
+      setQty(ingredient.selected_serving_qty);
+    }, [ingredient.selected_serving_qty]);
+
     const nutrition = ingredientNutrition(ingredient);
-    const handleQuantityChange = (e) => {
-      return;
+
+    const handleQuantityChange = () => {
+      if (qty === '' || qty <= 0)
+      {
+        setQty(ingredient.selected_serving_qty);
+      }
+      else 
+      {
+        if (qty !== ingredient.selected_serving_qty)
+        {
+          onQuantityChange(ingredient.id, qty);
+        }
+      }
     };
   
-    const handleUnitChange = (value: string) => {
-      return;
+    const handleUnitChange = (newUnit: string) => {
+       setUnit(newUnit);
+       onUnitChange(ingredient.id, newUnit); 
     };
   
     const handleDeleteClick = () => {
@@ -34,9 +64,9 @@ import { ingredientNutrition } from './mealcard';
           <h4 className="text-sm font-medium">{ingredient.name}</h4>
           <p className="text-xs text-muted-foreground mt-0.5">
             {Math.round(nutrition.calories)} kcal
-            {nutrition.protein > 0 && <> • P: {Math.round(nutrition.protein)}g</>}
-            {nutrition.carbohydrates > 0 && <> • C: {Math.round(nutrition.carbohydrates)}g</>}
-            {nutrition.fat > 0 && <> • F: {Math.round(nutrition.fat)}g</>}
+            • P: {Math.round(nutrition.protein)}g
+            • C: {Math.round(nutrition.carbohydrates)}g
+            • F: {Math.round(nutrition.fat)}g
           </p>
         </div>
       </div>
@@ -44,8 +74,9 @@ import { ingredientNutrition } from './mealcard';
       <div className="flex items-center gap-2 flex-shrink-0">
         <Input
           type="number"
-          value={ingredient.selected_serving_qty || ''} 
-          onChange={handleQuantityChange}
+          value={qty} 
+          onChange={(e) => setQty(e.target.value)}
+          onBlur={handleQuantityChange}
           className="h-8 text-sm w-[70px] flex-shrink-0" 
           min="0"
           step="0.1"
@@ -53,10 +84,10 @@ import { ingredientNutrition } from './mealcard';
           aria-label={`Quantity for ${ingredient.name}`}
         />
         <Select
-          value={ingredient.selected_serving_unit || ''} 
-          onValueChange={handleUnitChange}
+          value={unit} 
+          onValueChange={(newUnit) => handleUnitChange(newUnit)}
         >
-          <SelectTrigger className="h-8 text-sm w-[225px] flex-shrink-0" aria-label={`Unit for ${ingredient.name}`}> 
+          <SelectTrigger className="h-8 text-sm w-[240px] flex-shrink-0" aria-label={`Unit for ${ingredient.name}`}> 
             <SelectValue placeholder="Unit" />
           </SelectTrigger>
           <SelectContent>

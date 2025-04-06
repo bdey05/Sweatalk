@@ -150,11 +150,6 @@ def ingredients(current_user):
     return jsonify({"items": detailed_food_results}), 200
 
 
-@bp.route("/getmeal", methods=["POST"])
-@token_required
-def get_meal(current_user):
-    pass
-
 @bp.route("/getmeals", methods=["POST"])
 @token_required
 def get_meals(current_user):
@@ -190,7 +185,6 @@ def add_meal(current_user):
     )
 
     db.session.add(newMeal)
-    #db.session.commit()
 
     mealIngredients = meal_info["ingredients"]
 
@@ -200,7 +194,6 @@ def add_meal(current_user):
             meal_units.append(aU)
         newIngredient = Ingredient (
             name=ig["name"],
-            #meal_id=newMeal.id,
             meal=newMeal,
             fdc_id=ig["fdcId"],
             selected_serving_unit=ig["selectedServingUnit"],
@@ -208,11 +201,9 @@ def add_meal(current_user):
             available_units=meal_units
         )
         db.session.add(newIngredient)
-        #db.session.commit()
 
     newUserMeal = UserMeal (
         user_id=current_user.id,
-        #meal_id=newMeal.id,
         meal=newMeal,
         date=meal_date
     )
@@ -228,7 +219,7 @@ def add_meal(current_user):
 def delete_meal(current_user):
     pass
 
-@bp.route("/editmeal<int:meal_id>", methods=["PUT"])
+@bp.route("/editmeal/<int:meal_id>", methods=["PUT"])
 @token_required
 def edit_meal(current_user, meal_id):
     updated_meal = request.get_json()
@@ -250,11 +241,11 @@ def edit_meal(current_user, meal_id):
     meal_to_update.serving_qty = updated_meal["servingQty"]
     meal_to_update.is_saved = updated_meal["isSaved"]
 
-    for ig in meal_to_update["ingredients"]:
+    for ig in updated_meal["ingredients"]:
         newIngredient = Ingredient (
             name=ig["name"],
             meal_id=meal_to_update.id,
-            fdc_id=ig["fdcId"],
+            fdc_id=ig["fdc_id"],
             selected_serving_unit=ig["selected_serving_unit"],
             selected_serving_qty=ig["selected_serving_qty"],
             available_units=ig["available_units"]
