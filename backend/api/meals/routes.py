@@ -54,13 +54,11 @@ def ingredients(current_user):
     detailed_food_results = []
     processed_fdc_ids = set() 
 
-    #detail_fetch_limit = 10
-    #fetched_count = 0
+    
 
     for food in foods:
         
-        #if fetched_count >= detail_fetch_limit:
-        #    break
+        
         
         fdcId = food.get("fdcId")
         
@@ -147,7 +145,7 @@ def ingredients(current_user):
                 "name": food_name,
                 "servings": serving_options
             })
-            #fetched_count += 1
+            
 
     return jsonify({"items": detailed_food_results}), 200
 
@@ -192,7 +190,7 @@ def add_meal(current_user):
     )
 
     db.session.add(newMeal)
-    db.session.commit()
+    #db.session.commit()
 
     mealIngredients = meal_info["ingredients"]
 
@@ -202,18 +200,20 @@ def add_meal(current_user):
             meal_units.append(aU)
         newIngredient = Ingredient (
             name=ig["name"],
-            meal_id=newMeal.id,
+            #meal_id=newMeal.id,
+            meal=newMeal,
             fdc_id=ig["fdcId"],
             selected_serving_unit=ig["selectedServingUnit"],
             selected_serving_qty=ig["selectedServingQty"],
             available_units=meal_units
         )
         db.session.add(newIngredient)
-        db.session.commit()
+        #db.session.commit()
 
     newUserMeal = UserMeal (
         user_id=current_user.id,
-        meal_id=newMeal.id,
+        #meal_id=newMeal.id,
+        meal=newMeal,
         date=meal_date
     )
     db.session.add(newUserMeal)

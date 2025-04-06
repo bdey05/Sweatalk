@@ -28,7 +28,7 @@ def create_app(config_class=ConfigDevelopment):
 
     with app.app_context():
         try:
-            db.drop_all()
+            #db.drop_all()
             db.create_all()
             print("Success")
         except:
