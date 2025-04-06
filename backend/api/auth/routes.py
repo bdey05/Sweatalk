@@ -23,7 +23,7 @@ def register():
     db.session.add(newUser)
     db.session.commit()
     user = AppUser.query.filter_by(email=data['email']).first()  
-    token = jwt.encode({'id' : user.id, 'exp' : datetime.now(timezone.utc) + timedelta(hours=1)}, current_app.config['SECRET_KEY'], "HS256")
+    token = jwt.encode({'id' : user.id, 'exp' : datetime.now(timezone.utc) + timedelta(hours=5)}, current_app.config['SECRET_KEY'], "HS256")
     userObj = {
         "id": user.id,
         "email": user.email,
@@ -42,7 +42,7 @@ def login():
  
     user = AppUser.query.filter_by(email=auth['email']).first()  
     if user.verify_password(auth['password']):
-       token = jwt.encode({'id' : user.id, 'exp' : datetime.now(timezone.utc) + timedelta(hours=1)}, current_app.config['SECRET_KEY'], "HS256")
+       token = jwt.encode({'id' : user.id, 'exp' : datetime.now(timezone.utc) + timedelta(hours=5)}, current_app.config['SECRET_KEY'], "HS256")
        userObj = {
         "id": user.id,
         "email": user.email,

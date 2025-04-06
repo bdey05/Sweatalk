@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { startOfWeek } from "date-fns"
+import { startOfWeek, startOfDay } from "date-fns"
 
 type CalendarState = {
     currentMonth: Date
@@ -13,19 +13,19 @@ type CalendarState = {
 
 
 export const useCalendarStore = create<CalendarState>((set) => ({
-    currentMonth: new Date(),
-    date: new Date(),
-    weekStart: startOfWeek(new Date()),
+    currentMonth: startOfDay(new Date()),
+    date: startOfDay(new Date()),
+    weekStart: startOfWeek(startOfDay(new Date())),
     setCurrentMonth: (month) => {
-        set({currentMonth: month});
+        set({currentMonth: startOfDay(month)});
     },
     setDate: (newDate) => {
-        set({date: newDate});
+        set({date: startOfDay(newDate)});
     },
     setWeekStart: (newWeekStart) => {
-        set({weekStart: newWeekStart})
+        set({weekStart: startOfDay(newWeekStart)})
     },
     getToday: () => {
-        set({currentMonth: new Date(), date: new Date(), weekStart: startOfWeek(new Date())});
+        set({currentMonth: startOfDay(new Date()), date: startOfDay(new Date()), weekStart: startOfWeek(startOfDay(new Date()))});
     }
 }))

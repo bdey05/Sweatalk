@@ -24,19 +24,19 @@ export const Route = createFileRoute("/mealplanner")({
 });
 
 function MealPlanner() {
-  //const { data: ingredients = [], isLoading, isError } = useIngredients("bread");
 
   const date = useCalendarStore((state) => state.date)
 
   const { data: userMeals = [], isLoading, isError} = useGetMeals(date.toISOString().split('T')[0])
 
   useEffect(() => {
+    
     console.log(date.toISOString().split('T')[0])
   }, [date])
 
 
 
-  const suItem: ServingUnit = {
+  /*const suItem: ServingUnit = {
     unit: "grams",
     calories: 135,
     carbohydrates: 23,
@@ -100,7 +100,7 @@ function MealPlanner() {
   const mutation = useAddMeal(); 
   const handleAdd = () => {
     mutation.mutate({meal: testMeal, date: date.toISOString().split('T')[0]});
-  }
+  }*/
 
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -108,8 +108,8 @@ function MealPlanner() {
     setDialogOpen(true);
   };
 
-  const addMeal = () => {
-    /*let newMeal = {
+  /*const addMeal = () => {
+    let newMeal = {
       name: "cake",
       calories: 347,
       protein: 43,
@@ -117,9 +117,9 @@ function MealPlanner() {
       fat: 30,
       isSaved: true,
     };
-    setMeals([...meals, newMeal]);*/
+    setMeals([...meals, newMeal]);
     return;
-  };
+  };*/
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
@@ -141,16 +141,16 @@ function MealPlanner() {
               <Plus className="w-5 h-5" />
               Add New Meal
             </Button>
-            <Button
+            {/*<Button
               className="bg-secondary text-primary-foreground hover:bg-secondary/90 px-6 py-3 shadow-lg flex items-center gap-2 transition-transform hover:scale-105"
               onClick={handleAdd}
             >
               <Plus className="w-5 h-5" />
               Add Existing Meal
-            </Button>
+            </Button>*/}
           </div>
           <div className="mt-6 space-y-4 w-full max-w-2xl lg:max-w-3xl flex flex-col items-center"> 
-            <MealList meals={meals} />
+            <MealList meals={userMeals} />
           </div>
         </main>
       </div>

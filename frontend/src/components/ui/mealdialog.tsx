@@ -19,7 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { X, Trash2, Plus, Loader2 } from "lucide-react";
+import { Trash2, Plus, Flame, Beef, Wheat, Droplet } from "lucide-react";
 import { useIngredients } from "@/hooks/useIngredients";
 import { ServingUnit, Ingredient, Meal } from "@/stores/mealstore";
 import { useCalendarStore } from "@/stores/calendarstore";
@@ -138,7 +138,7 @@ const MealDialog: React.FC<MealDialogProps> = ({
     }
   }
 
-  const mealNutrition = () => {
+  const mealNutrition = useMemo(() => {
     let calories = 0;
     let protein = 0;
     let carbohydrates = 0;
@@ -157,18 +157,17 @@ const MealDialog: React.FC<MealDialogProps> = ({
       "carbohydrates": carbohydrates,
       "fat": fat
     }
-  }
+  }, [selectedIngredients, ingredientNutrition]);
 
   const handleSave = () => {
-    const mealInfo = mealNutrition();
     if (mode === "addMeal")
     {
       const newMeal: Meal = {
         name: title,
-        calories: mealInfo.calories,
-        protein: mealInfo.protein,
-        carbohydrates: mealInfo.carbohydrates,
-        fat: mealInfo.fat,
+        calories: mealNutrition.calories,
+        protein: mealNutrition.protein,
+        carbohydrates: mealNutrition.carbohydrates,
+        fat: mealNutrition.fat,
         isSaved: false, 
         ingredients: selectedIngredients, 
         servingQty: 1
@@ -368,6 +367,55 @@ const MealDialog: React.FC<MealDialogProps> = ({
             </ScrollArea>
           </div>
         </div>
+        <div className="mt-4 pt-4 border-t">
+            <h3 className="text-lg font-semibold mb-3 text-center text-primary">
+              Meal Nutrition Summary
+            </h3>
+            {selectedIngredients.length > 0 ? (
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div className="flex flex-col items-center justify-center p-4 rounded-lg bg-card border shadow-sm">
+                  <Flame className="w-6 h-6 mb-2 text-destructive" /> 
+                  <span className="text-xs font-medium text-muted-foreground">Calories</span>
+                  <span className="text-xl font-bold text-card-foreground"> 
+                    {Math.round(mealNutrition.calories)}
+                  </span>
+                  <span className="text-xs text-muted-foreground">kcal</span>
+                </div>
+
+                <div className="flex flex-col items-center justify-center p-4 rounded-lg bg-card border shadow-sm"> 
+                  <Beef className="w-6 h-6 mb-2 text-accent" />
+                  <span className="text-xs font-medium text-muted-foreground">Protein</span>
+                  <span className="text-xl font-bold text-card-foreground"> 
+                    {Math.round(mealNutrition.protein)}
+                  </span>
+                  <span className="text-xs text-muted-foreground">g</span>
+                </div>
+
+                <div className="flex flex-col items-center justify-center p-4 rounded-lg bg-card border shadow-sm"> 
+                  <Wheat className="w-6 h-6 mb-2 text-secondary" /> 
+                  <span className="text-xs font-medium text-muted-foreground">Carbs</span>
+                  <span className="text-xl font-bold text-card-foreground"> 
+                    {Math.round(mealNutrition.carbohydrates)}
+                  </span>
+                  <span className="text-xs text-muted-foreground">g</span>
+                </div>
+
+                <div className="flex flex-col items-center justify-center p-4 rounded-lg bg-card border shadow-sm"> 
+                  <Droplet className="w-6 h-6 mb-2 text-ring" /> 
+                  <span className="text-xs font-medium text-muted-foreground">Fat</span>
+                  <span className="text-xl font-bold text-card-foreground"> 
+                    {Math.round(mealNutrition.fat)}
+                  </span>
+                  <span className="text-xs text-muted-foreground">g</span>
+                </div>
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground text-center py-4">
+                Add ingredients to see nutrition summary.
+              </p>
+            )}
+          </div>
+
 
         <DialogFooter>
           <DialogClose asChild>

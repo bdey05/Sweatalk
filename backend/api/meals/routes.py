@@ -9,7 +9,7 @@ from api.models.usermodel import AppUser
 from api.models.meal import Meal
 from api.models.usermeal import UserMeal
 from api.models.ingredient import Ingredient
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, selectinload
 from datetime import datetime, date
 
 
@@ -228,9 +228,43 @@ def add_meal(current_user):
 def delete_meal(current_user):
     pass
 
-@bp.route("/editmeal", methods=["PUT"])
+@bp.route("/editmeal<int:meal_id>", methods=["PUT"])
 @token_required
-def edit_meal(current_user):
-    pass
+def edit_meal(current_user, meal_id):
+    updated_meal = request.get_json()
+    meal_to_update = db.session.query(Meal).options(
+        selectinload(Meal.ingredients)
+    ).join(UserMeal, UserMeal.meal_id == Meal.id).filter(
+        Meal.id == meal_id,
+        UserMeal.user_id == current_user.id 
+    ).first()
+
+    for current_ingredient in meal_to_update.ingredients:
+        db.session.delete(current_ingredient)
+    
+    meal_to_update.name = updated_meal["name"]
+    meal_to_update.calories = updated_meal["calories"]
+    meal_to_update.protein = updated_meal["protein"]
+    meal_to_update.carbohydrates = updated_meal["carbohydrates"]
+    meal_to_update.fat = updated_meal["fat"]
+    meal_to_update.serving_qty = updated_meal["servingQty"]
+    meal_to_update.is_saved = updated_meal["isSaved"]
+
+    for ig in meal_to_update["ingredients"]:
+        newIngredient = Ingredient (
+            name=ig["name"],
+            meal_id=meal_to_update.id,
+            fdc_id=ig["fdcId"],
+            selected_serving_unit=ig["selected_serving_unit"],
+            selected_serving_qty=ig["selected_serving_qty"],
+            available_units=ig["available_units"]
+        )
+        db.session.add(newIngredient)
+    db.session.commit()
+    updated_meal = db.session.query(Meal).options(
+            selectinload(Meal.ingredients)
+        ).filter(Meal.id == meal_id).first()
+    return jsonify(updated_meal.to_dict()), 200
+
 
 
