@@ -24,12 +24,23 @@ import { useIngredients } from "@/hooks/useIngredients";
 import { ServingUnit, Ingredient, Meal } from "@/stores/mealstore";
 import { useCalendarStore } from "@/stores/calendarstore";
 import { useAddMeal } from "@/hooks/useAddMeal";
+import { useUpdateMeal } from "@/hooks/useUpdateMeal";
+
+type MealNutritionData = {
+  calories: number
+  protein: number
+  carbohydrates: number 
+  fat: number
+}
 
 type MealDialogProps = {
-  open: boolean;
-  onClose: () => void;
-  mode: "addMeal" | "addIngredient";
-  mealId?: number;
+  open: boolean
+  onClose: () => void
+  mode: "addMeal" | "addIngredient"
+  mealId?: number
+  currentNutrition?: MealNutritionData 
+  mealName?: string 
+  currentIngredients?: Ingredient[]
 }
 
 type SelectedIngredient = {
@@ -47,6 +58,9 @@ const MealDialog: React.FC<MealDialogProps> = ({
   onClose,
   mode,
   mealId,
+  currentNutrition,
+  mealName,
+  currentIngredients
 }) => {
   const [title, setTitle] = useState<string>("");
   const [query, setQuery] = useState<string>("");
@@ -54,6 +68,9 @@ const MealDialog: React.FC<MealDialogProps> = ({
   const [selectedIngredients, setSelectedIngredients] = useState<SelectedIngredient[]>([]);
   const date = useCalendarStore((state) => state.date);
   const mutation = useAddMeal();
+  const updateMutation = useUpdateMeal();
+
+  console.log(currentIngredients);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -139,10 +156,21 @@ const MealDialog: React.FC<MealDialogProps> = ({
   }
 
   const mealNutrition = useMemo(() => {
-    let calories = 0;
-    let protein = 0;
-    let carbohydrates = 0;
-    let fat = 0;
+    let calories, protein, carbohydrates, fat;
+    if (mode === "addMeal")
+    {
+      calories = 0;
+      protein = 0;
+      carbohydrates = 0;
+      fat = 0;
+    }
+    else 
+    {
+      calories = currentNutrition?.calories;
+      protein = currentNutrition?.protein;
+      carbohydrates = currentNutrition?.carbohydrates;
+      fat = currentNutrition?.fat;
+    }
     for (let seling of selectedIngredients)
     {
       calories += ingredientNutrition(seling.fdcId).calories;
@@ -173,8 +201,40 @@ const MealDialog: React.FC<MealDialogProps> = ({
         servingQty: 1
       }
       mutation.mutate({meal: newMeal, date: date.toISOString().split('T')[0]});
-      onClose();
     }
+    else 
+    {
+      let updatedIngredients = [...currentIngredients];
+
+      for (let ing of selectedIngredients)
+      {
+        let ingToAdd = {
+          "available_units": ing.servingUnits,
+          "fdc_id": ing.fdcId,
+          "name": ing.name,
+          "selected_serving_qty": ing.selectedServingQty,
+          "selected_serving_unit": ing.selectedServingUnit
+        }
+        updatedIngredients.push(ingToAdd);
+      }
+
+      const updatedMeal: Meal = {
+        name: mealName,
+        id: mealId,
+        calories: mealNutrition.calories,
+        protein: mealNutrition.protein,
+        carbohydrates: mealNutrition.carbohydrates,
+        fat: mealNutrition.fat,
+        isSaved: false, 
+        ingredients: updatedIngredients, 
+        servingQty: 1
+      }
+
+      updateMutation.mutate(updatedMeal);
+
+    }
+    onClose();
+
   }
 
   useEffect(() => {
@@ -371,7 +431,7 @@ const MealDialog: React.FC<MealDialogProps> = ({
             <h3 className="text-lg font-semibold mb-3 text-center text-primary">
               Meal Nutrition Summary
             </h3>
-            {selectedIngredients.length > 0 ? (
+            {selectedIngredients.length > 0 || currentNutrition ? (
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <div className="flex flex-col items-center justify-center p-4 rounded-lg bg-card border shadow-sm">
                   <Flame className="w-6 h-6 mb-2 text-destructive" /> 

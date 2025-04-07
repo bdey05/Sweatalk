@@ -50,7 +50,7 @@ type IngredientItemProps = {
     };
   
     const handleDeleteClick = () => {
-      return;
+      onDelete(ingredient.id); 
     }
 
     return (

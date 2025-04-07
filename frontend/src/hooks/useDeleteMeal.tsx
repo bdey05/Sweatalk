@@ -3,16 +3,15 @@ import { Meal, Ingredient } from "@/stores/mealstore"
 import { useCalendarStore } from "@/stores/calendarstore"
 
 
-export const updateMeal = async (mealToUpdate: Meal): Promise<Meal> => {
-    console.log(mealToUpdate);
+export const deleteMeal = async (mealID: number): Promise<Meal> => {
+    console.log(mealID);
     try {
-        const res = await fetch(`http://localhost:5000/editmeal/${mealToUpdate.id}`, {
-            method: "PUT",
+        const res = await fetch(`http://localhost:5000/deletemeal/${mealID}`, {
+            method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
                 "x-access-tokens": localStorage.getItem("token")
-            },
-            body: JSON.stringify(mealToUpdate)
+            }
         })
         if (!res.ok){
             throw new Error("Failed to reach endpoint")
@@ -27,17 +26,17 @@ export const updateMeal = async (mealToUpdate: Meal): Promise<Meal> => {
 
 }
 
-export const useUpdateMeal = () => {
+export const useDeleteMeal = () => {
     const queryClient = useQueryClient();
     const date = useCalendarStore((state) => state.date);
 
     return useMutation({
-        mutationFn: updateMeal,
+        mutationFn: deleteMeal,
         onSuccess: (data, variables) => {
             queryClient.invalidateQueries({ queryKey: ['meals', date.toISOString().split('T')[0]] })
         },
         onError: (error) => {
-            console.error("Failed to update meal: ", error);
+            console.error("Failed to delete meal: ", error);
         }
     })
 }

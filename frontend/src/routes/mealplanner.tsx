@@ -3,7 +3,7 @@ import AppNav from "@/components/ui/appnav";
 import RightSidebar from "@/components/ui/rightsidebar";
 import WeekNav from "@/components/ui/weeknav";
 import { Button } from "@/components/ui/button";
-import { Plus, Save } from "lucide-react";
+import { Plus, Trash } from "lucide-react";
 import MealCard from "@/components/ui/mealcard";
 import { useEffect, useState } from "react";
 import MealList from "@/components/ui/meallist";
@@ -13,6 +13,7 @@ import { ServingUnit, Ingredient, Meal } from "@/stores/mealstore";
 import { useCalendarStore } from "@/stores/calendarstore";
 import { useGetMeals } from "@/hooks/useGetMeals";
 import { useAddMeal } from "@/hooks/useAddMeal";
+import { useDeleteMeal } from "@/hooks/useDeleteMeal";
 
 export const Route = createFileRoute("/mealplanner")({
   beforeLoad: async () => {
@@ -29,6 +30,8 @@ function MealPlanner() {
 
   const { data: userMeals = [], isLoading, isError} = useGetMeals(date.toISOString().split('T')[0])
 
+  const deleteMutation = useDeleteMeal();
+
   useEffect(() => {
     
     console.log(date.toISOString().split('T')[0])
@@ -36,90 +39,18 @@ function MealPlanner() {
 
 
 
-  /*const suItem: ServingUnit = {
-    unit: "grams",
-    calories: 135,
-    carbohydrates: 23,
-    fat: 37,
-    protein: 22,
-  };
-  const item: Ingredient = {
-    fdcID: 12,
-    selectedServingQty: 23,
-    selectedServingUnit: "grams",
-    name: "Chicken Breast",
-    servingUnits: [suItem],
-    calories: 365,
-    protein: 66,
-    carbohydrates: 69,
-    fat: 100,
-  };
-
-  const [meals, setMeals] = useState<Meal[]>([
-    {
-      mealID: 123,
-      name: "Chicken Sandwich with Tomato Soup",
-      calories: 587,
-      protein: 35,
-      carbohydrates: 40,
-      fat: 90,
-      isSaved: true,
-      ingredients: [
-        item, item, item
-      ],
-      servingQty: 1
-    },
-    {
-      mealID: 123,
-      name: "Grilled Salmon with Potatoes",
-      calories: 287,
-      protein: 45,
-      carbohydrates: 30,
-      fat: 120,
-      isSaved: true,
-      ingredients: [
-        item, item, item
-      ],
-      servingQty: 2
-    },
-  ]);
-
-  const testMeal: Meal = {
-    name: "Grilled Salmon with Potatoes",
-      calories: 287,
-      protein: 45,
-      carbohydrates: 30,
-      fat: 120,
-      isSaved: true,
-      ingredients: [
-        item, item, item
-      ],
-      servingQty: 1
-  }
-
-  const mutation = useAddMeal(); 
-  const handleAdd = () => {
-    mutation.mutate({meal: testMeal, date: date.toISOString().split('T')[0]});
-  }*/
-
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const openDialog = (mode) => {
     setDialogOpen(true);
   };
 
-  /*const addMeal = () => {
-    let newMeal = {
-      name: "cake",
-      calories: 347,
-      protein: 43,
-      carbohydrates: 30,
-      fat: 30,
-      isSaved: true,
-    };
-    setMeals([...meals, newMeal]);
-    return;
-  };*/
+  const handleDeleteAll = () => {
+    for (let meal of userMeals)
+    {
+      deleteMutation.mutate(meal.id);
+    }
+  }
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
@@ -141,13 +72,13 @@ function MealPlanner() {
               <Plus className="w-5 h-5" />
               Add New Meal
             </Button>
-            {/*<Button
-              className="bg-secondary text-primary-foreground hover:bg-secondary/90 px-6 py-3 shadow-lg flex items-center gap-2 transition-transform hover:scale-105"
-              onClick={handleAdd}
+            <Button
+              className="bg-destructive text-primary-foreground hover:bg-destructive/90 px-6 py-3 shadow-lg flex items-center gap-2 transition-transform hover:scale-105"
+              onClick={handleDeleteAll}
             >
-              <Plus className="w-5 h-5" />
-              Add Existing Meal
-            </Button>*/}
+              <Trash className="w-5 h-5" />
+              Delete All Meals
+            </Button>
           </div>
           <div className="mt-6 space-y-4 w-full max-w-2xl lg:max-w-3xl flex flex-col items-center"> 
             <MealList meals={userMeals} />

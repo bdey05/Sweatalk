@@ -9,6 +9,7 @@ import IngredientItem from './ingredientitem';
 import { ServingUnit, Ingredient, Meal } from "@/stores/mealstore";
 import MealDialog from "@/components/ui/mealdialog";
 import { useUpdateMeal } from '@/hooks/useUpdateMeal';
+import { useDeleteMeal } from '@/hooks/useDeleteMeal';
 
 export const ingredientNutrition = (ing) => {
   const selectedUnit = ing?.available_units.find(selIng => selIng.unit === ing.selected_serving_unit);
@@ -38,6 +39,7 @@ const MealCard: React.FC<Meal> = ({
    const [mealName, setMealName] = useState(name);
    const [ingredientsList, setIngredientsList] = useState(ingredients);
    const updateMutation = useUpdateMeal();
+   const deleteMutation = useDeleteMeal();
 
     useEffect(() => {
         setMealName(name); 
@@ -125,9 +127,17 @@ const MealCard: React.FC<Meal> = ({
       handleMutation(newIngredientsList, mealName);
     }, [ingredientsList, mealName, handleMutation]);
 
-    const handleIngredientDelete = useCallback((id: number) => {
-      return;
-    }, []);
+    const handleIngredientDelete = useCallback((ingID: number) => {
+      const newIngredientsList = ingredientsList.filter(ing => ing.id !== ingID);
+      setIngredientsList(newIngredientsList);
+      if (newIngredientsList.length === 0)
+      {
+        deleteMutation.mutate(id);
+      }
+      else {
+        handleMutation(newIngredientsList, mealName);
+      }
+    }, [handleMutation, ingredientsList, mealName, deleteMutation, id]);
 
   return (
     
@@ -216,7 +226,7 @@ const MealCard: React.FC<Meal> = ({
         <Button
           variant="ghost"
           className="text-destructive hover:text-destructive/90 hover:bg-destructive/10"
-          onClick={() => { }}
+          onClick={() => deleteMutation.mutate(id)}
         >
           <Trash2 className="h-4 w-4 mr-2" />
           Delete Meal
@@ -228,6 +238,10 @@ const MealCard: React.FC<Meal> = ({
     open={dialogOpen}
     onClose={() => setDialogOpen(false)}
     mode="addIngredient"
+    mealId={id}
+    currentNutrition={mealNutrition}
+    mealName={name}
+    currentIngredients={ingredients}
   />
     </Card>
   );

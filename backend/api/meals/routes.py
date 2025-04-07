@@ -11,7 +11,7 @@ from api.models.usermeal import UserMeal
 from api.models.ingredient import Ingredient
 from sqlalchemy.orm import joinedload, selectinload
 from datetime import datetime, date
-
+import string
 
 NUTRIENT_ID_CALORIES = "208"
 NUTRIENT_ID_PROTEIN = "203"
@@ -142,7 +142,7 @@ def ingredients(current_user):
         if serving_options:
             detailed_food_results.append({
                 "fdcId": fdcId,
-                "name": food_name,
+                "name": string.capwords(food_name),
                 "servings": serving_options
             })
             
@@ -214,10 +214,33 @@ def add_meal(current_user):
 
 
 
-@bp.route("/deletemeal", methods=["DELETE"])
+@bp.route("/deletemeal/<int:meal_id>", methods=["DELETE"])
 @token_required
-def delete_meal(current_user):
-    pass
+def delete_meal(current_user, meal_id):
+
+    meal_to_delete = db.session.query(Meal).join(
+        UserMeal, UserMeal.meal_id == Meal.id
+    ).filter(
+        Meal.id == meal_id,
+        UserMeal.user_id == current_user.id
+    ).first()
+    
+    user_meal_to_delete = db.session.query(UserMeal).filter_by(
+        user_id=current_user.id, 
+        meal_id=meal_id
+    ).first()
+
+    db.session.delete(user_meal_to_delete)
+
+    deleted_ingredients = db.session.query(Ingredient).filter(
+        Ingredient.meal_id==meal_id
+    ).delete()
+
+    db.session.delete(meal_to_delete)
+
+    db.session.commit()
+    return jsonify({"Success": "Meal Deleted"}), 200
+
 
 @bp.route("/editmeal/<int:meal_id>", methods=["PUT"])
 @token_required
