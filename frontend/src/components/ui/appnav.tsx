@@ -1,9 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ModeToggle } from "@/components/mode-toggle";
 import {
-  Calendar,
   DumbbellIcon,
-  LayoutDashboard,
   LogOut,
   Utensils
 } from "lucide-react";
@@ -18,17 +16,31 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+
+import { Separator } from "@/components/ui/separator";     
+
+import DailyNutritionSummary from "./dailynutrition";
+
 import { useAuthStore } from "@/stores/authstore";
 
 const navigationItems = [
-  //{ icon: LayoutDashboard, label: "Dashboard", to: "/dashboard", isActive: true },
-  //{ icon: Calendar, label: "Schedule", to: "/schedule" },
   { icon: Utensils, label: "Meal Plan", to: "/mealplanner" },
   { icon: DumbbellIcon, label: "Workout Tracker", to: "/workout" },
 ]
 
+type DailyNutriton = {
+  calories: number
+  protein: number
+  carbohydrates: number
+  fat: number
+}
 
-const AppNav = () => {
+type AppNavProps = {
+  dailyNutrition: DailyNutriton;
+}
+
+
+const AppNav: React.FC<AppNavProps> = ({ dailyNutrition }) => {
   const handleLogout = useAuthStore((state) => state.handleLogout);
 
   return (
@@ -60,6 +72,16 @@ const AppNav = () => {
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
+                {dailyNutrition &&
+                <div className="mt-auto mb-4"> 
+                    <DailyNutritionSummary
+                        calories={dailyNutrition.calories}
+                        protein={dailyNutrition.protein}
+                        carbohydrates={dailyNutrition.carbohydrates}
+                        fat={dailyNutrition.fat}
+                    />
+                </div> 
+              }
           </SidebarContent>
           <SidebarFooter className="p-4">
           <SidebarMenu>

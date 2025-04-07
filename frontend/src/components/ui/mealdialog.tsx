@@ -434,7 +434,7 @@ const MealDialog: React.FC<MealDialogProps> = ({
             {selectedIngredients.length > 0 || currentNutrition ? (
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <div className="flex flex-col items-center justify-center p-4 rounded-lg bg-card border shadow-sm">
-                  <Flame className="w-6 h-6 mb-2 text-destructive" /> 
+                  <Flame className="w-6 h-6 mb-2 text-primary" /> 
                   <span className="text-xs font-medium text-muted-foreground">Calories</span>
                   <span className="text-xl font-bold text-card-foreground"> 
                     {Math.round(mealNutrition.calories)}
@@ -443,7 +443,7 @@ const MealDialog: React.FC<MealDialogProps> = ({
                 </div>
 
                 <div className="flex flex-col items-center justify-center p-4 rounded-lg bg-card border shadow-sm"> 
-                  <Beef className="w-6 h-6 mb-2 text-accent" />
+                  <Beef className="w-6 h-6 mb-2 text-destructive" />
                   <span className="text-xs font-medium text-muted-foreground">Protein</span>
                   <span className="text-xl font-bold text-card-foreground"> 
                     {Math.round(mealNutrition.protein)}
@@ -452,7 +452,7 @@ const MealDialog: React.FC<MealDialogProps> = ({
                 </div>
 
                 <div className="flex flex-col items-center justify-center p-4 rounded-lg bg-card border shadow-sm"> 
-                  <Wheat className="w-6 h-6 mb-2 text-secondary" /> 
+                  <Wheat className="w-6 h-6 mb-2 text-accent" /> 
                   <span className="text-xs font-medium text-muted-foreground">Carbs</span>
                   <span className="text-xl font-bold text-card-foreground"> 
                     {Math.round(mealNutrition.carbohydrates)}
@@ -461,7 +461,7 @@ const MealDialog: React.FC<MealDialogProps> = ({
                 </div>
 
                 <div className="flex flex-col items-center justify-center p-4 rounded-lg bg-card border shadow-sm"> 
-                  <Droplet className="w-6 h-6 mb-2 text-ring" /> 
+                  <Droplet className="w-6 h-6 mb-2 text-secondary" /> 
                   <span className="text-xs font-medium text-muted-foreground">Fat</span>
                   <span className="text-xl font-bold text-card-foreground"> 
                     {Math.round(mealNutrition.fat)}

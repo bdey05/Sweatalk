@@ -5,7 +5,7 @@ import WeekNav from "@/components/ui/weeknav";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash } from "lucide-react";
 import MealCard from "@/components/ui/mealcard";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import MealList from "@/components/ui/meallist";
 import MealDialog from "@/components/ui/mealdialog";
 import { useIngredients } from "@/hooks/useIngredients";
@@ -32,6 +32,30 @@ function MealPlanner() {
 
   const deleteMutation = useDeleteMeal();
 
+  const dailyNutrition = useMemo(() => {
+    let calories = 0;
+    let protein = 0;
+    let carbohydrates = 0;
+    let fat = 0;
+
+    for (const meal of userMeals)
+    {
+      calories += meal.calories;
+      protein += meal.protein;
+      carbohydrates += meal.carbohydrates;
+      fat += meal.fat;
+    };
+
+    return {
+      calories: Math.round(calories),
+      protein: Math.round(protein),
+      carbohydrates: Math.round(carbohydrates),
+      fat: Math.round(fat)
+    }
+
+  }, [userMeals])
+
+
   useEffect(() => {
     
     console.log(date.toISOString().split('T')[0])
@@ -46,7 +70,7 @@ function MealPlanner() {
   };
 
   const handleDeleteAll = () => {
-    for (let meal of userMeals)
+    for (const meal of userMeals)
     {
       deleteMutation.mutate(meal.id);
     }
@@ -55,7 +79,7 @@ function MealPlanner() {
   return (
     <div className="flex h-screen overflow-hidden bg-background">
       <div className="flex-shrink-0">
-        <AppNav />
+        <AppNav dailyNutrition={dailyNutrition}/>
       </div>
 
       <div className="flex-1 flex flex-col overflow-hidden">

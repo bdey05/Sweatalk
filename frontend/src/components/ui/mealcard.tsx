@@ -180,7 +180,7 @@ const MealCard: React.FC<Meal> = ({
               <p className="font-bold text-destructive">{mealNutrition.protein}g</p>
             </div>
             <div className="bg-accent/70 dark:bg-accent/40 rounded-lg p-2">
-              <p className="text-xs text-muted-foreground">Carbs</p>
+              <p className="text-xs text-muted-foreground">Carbohydrates</p>
               <p className="font-bold text-accent-foreground">{mealNutrition.carbohydrates}g</p>
             </div>
             <div className="bg-secondary/70 dark:bg-secondary/40 rounded-lg p-2">

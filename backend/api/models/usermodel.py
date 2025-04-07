@@ -1,8 +1,7 @@
 from api import db, bcrypt
-from sqlalchemy import Date, DateTime, Float, Integer, String, Boolean
+from sqlalchemy import Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, validates
 from sqlalchemy.exc import SQLAlchemyError
-import datetime 
 import re 
 
 class AppUser(db.Model):

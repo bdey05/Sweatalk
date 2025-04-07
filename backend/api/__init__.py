@@ -28,7 +28,6 @@ def create_app(config_class=ConfigDevelopment):
 
     with app.app_context():
         try:
-            #db.drop_all()
             db.create_all()
         except:
             print("Error creating database tables")
