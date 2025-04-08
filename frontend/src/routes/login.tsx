@@ -1,16 +1,15 @@
 import {
   createFileRoute,
   Link,
-  redirect,
   useNavigate,
 } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import Navbar from "@/components/ui/navbar";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/stores/authstore";
+import { FormEvent } from 'react';
 
 export const Route = createFileRoute("/login")({
   component: Login,
@@ -25,7 +24,7 @@ function Login() {
   const resetErrors = useAuthStore((state) => state.resetErrors);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     handleLogin(email, password);
   };

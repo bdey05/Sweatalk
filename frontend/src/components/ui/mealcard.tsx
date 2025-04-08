@@ -91,6 +91,7 @@ const MealCard: React.FC<Meal> = ({
         updateMutation.mutate(updatedMeal);
       }, [id, mealNutrition.calories, mealNutrition.carbohydrates, mealNutrition.protein, mealNutrition.fat, updateMutation]);
 
+     
       const handleNameChange = () => {
           const trimmedName = mealName.trim();
           if (trimmedName && trimmedName !== name)

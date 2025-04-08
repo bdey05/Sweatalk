@@ -1,12 +1,12 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import Navbar from "@/components/ui/navbar";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/stores/authstore";
+import { FormEvent } from 'react';
+
 
 export const Route = createFileRoute("/register")({
   component: Register,
@@ -24,26 +24,29 @@ function Register() {
 
   const [weight, setWeight] = useState<number>();
 
-
-  const token = useAuthStore((state) => state.token)
+  const token = useAuthStore((state) => state.token);
   const handleRegister = useAuthStore((state) => state.handleRegister);
   const registerError = useAuthStore((state) => state.registerError);
   const resetErrors = useAuthStore((state) => state.resetErrors);
 
   const navigate = useNavigate();
 
-  const verifyFields = (e) => {
+  const verifyFields = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     resetErrors();
     setValidationError("");
-    if (password !== repeatPassword)
-    {
+    if (password !== repeatPassword) {
       setValidationError("Error: Entered passwords do not match");
-    }
-    else 
-    {
-      const height = (feet! * 12) + inches!; 
-      handleRegister(username, email, password, age as number, weight as number, height);
+    } else {
+      const height = feet! * 12 + inches!;
+      handleRegister(
+        username,
+        email,
+        password,
+        age as number,
+        weight as number,
+        height
+      );
     }
   };
 
@@ -55,8 +58,7 @@ function Register() {
     if (token) {
       navigate({ to: "/mealplanner" });
     }
-  }, [token, navigate])
-
+  }, [token, navigate]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -64,14 +66,21 @@ function Register() {
       <div className="flex-1 flex items-center justify-center p-6">
         <div className="w-full max-w-[400px] space-y-6">
           <div className="space-y-1">
-            <h1 className="text-4xl font-semibold tracking-tight">Sign up for an account</h1>
+            <h1 className="text-4xl font-semibold tracking-tight">
+              Sign up for an account
+            </h1>
             <p className="text-base">Get ready to begin your fitness journey</p>
           </div>
 
           <form className="space-y-3" onSubmit={verifyFields}>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" onChange={(e) => setEmail(e.target.value)} required />
+              <Input
+                id="email"
+                type="email"
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="username">Username</Label>
@@ -81,8 +90,12 @@ function Register() {
                 minLength={3}
                 maxLength={20}
                 pattern="^[a-zA-Z].*$"
-                onInvalid={(e) => e.target.setCustomValidity("Username must start with a letter")}
-                onInput={(e) => e.target.setCustomValidity("")}
+                onInvalid={(e) =>
+                  (e.target as HTMLInputElement).setCustomValidity(
+                    "Username must start with a letter"
+                  )
+                }
+                onInput={(e) => (e.target as HTMLInputElement).setCustomValidity("")}
                 onChange={(e) => setUsername(e.target.value)}
                 required
               />
@@ -97,11 +110,11 @@ function Register() {
                 minLength={8}
                 pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$"
                 onInvalid={(e) =>
-                  e.target.setCustomValidity(
-                    "Password must be at least 8 characters with at least 1 uppercase letter, 1 lowercase letter, 1 digit, and 1 special character",
+                  (e.target as HTMLInputElement).setCustomValidity(
+                    "Password must be at least 8 characters with at least 1 uppercase letter, 1 lowercase letter, 1 digit, and 1 special character"
                   )
                 }
-                onInput={(e) => e.target.setCustomValidity("")}
+                onInput={(e) => (e.target as HTMLInputElement).setCustomValidity("")}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
@@ -110,7 +123,12 @@ function Register() {
               <div className="flex items-center justify-between">
                 <Label htmlFor="repeatpassword">Repeat Password</Label>
               </div>
-              <Input id="repeatpassword" type="password" onChange={(e) => setRepeatPassword(e.target.value)} required />
+              <Input
+                id="repeatpassword"
+                type="password"
+                onChange={(e) => setRepeatPassword(e.target.value)}
+                required
+              />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
