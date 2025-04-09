@@ -53,43 +53,49 @@ const MealCard: React.FC<Meal> = ({
       setDialogOpen(true);
     };
     
-    
-      const mealNutrition = useMemo(() => {
+      const calcNutrition = useCallback((ingredients: Ingredient[]) => {
         let calories = 0;
         let protein = 0;
         let carbohydrates = 0;
         let fat = 0;
-        for (let ig of ingredientsList)
-        {
-          calories += ingredientNutrition(ig).calories;
-          protein += ingredientNutrition(ig).protein;
-          carbohydrates += ingredientNutrition(ig).carbohydrates;
-          fat += ingredientNutrition(ig).fat;
+
+        for (const ig of ingredients) {
+          const nutrition = ingredientNutrition(ig);
+          calories += nutrition.calories;
+          protein += nutrition.protein;
+          carbohydrates += nutrition.carbohydrates;
+          fat += nutrition.fat;
         }
-        
+
         return {
-          "calories": Math.round(calories),
-          "protein": Math.round(protein), 
-          "carbohydrates": Math.round(carbohydrates),
-          "fat": Math.round(fat)
-        }
-      }, [ingredientsList]);
+          calories: Math.round(calories),
+          protein: Math.round(protein),
+          carbohydrates: Math.round(carbohydrates),
+          fat: Math.round(fat)
+        };
+      }, [])
+    
+      const mealNutrition = useMemo(() => {
+       return calcNutrition(ingredientsList);
+      }, [ingredientsList, calcNutrition]);
 
 
       const handleMutation = useCallback((updatedIngredients: Ingredient[], newMealName: string) => {
+        const newNutrition = calcNutrition(updatedIngredients);
         const updatedMeal = {
           name: newMealName,
           id: id, 
-          calories: mealNutrition.calories,
-          protein: mealNutrition.protein,
-          carbohydrates: mealNutrition.carbohydrates,
-          fat: mealNutrition.fat,
+          calories: newNutrition.calories,
+          protein: newNutrition.protein,
+          carbohydrates: newNutrition.carbohydrates,
+          fat: newNutrition.fat,
           isSaved: false,
           ingredients: updatedIngredients,
           servingQty: 1
         }
         updateMutation.mutate(updatedMeal);
-      }, [id, mealNutrition.calories, mealNutrition.carbohydrates, mealNutrition.protein, mealNutrition.fat, updateMutation]);
+      }, [id, calcNutrition, updateMutation]);
+
 
      
       const handleNameChange = () => {
