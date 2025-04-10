@@ -70,7 +70,6 @@ const MealDialog: React.FC<MealDialogProps> = ({
   const mutation = useAddMeal();
   const updateMutation = useUpdateMeal();
 
-  console.log(currentIngredients);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -82,9 +81,7 @@ const MealDialog: React.FC<MealDialogProps> = ({
     };
   }, [query]);
 
-  useEffect(() => {
-    console.log(selectedIngredients);
-  }, [selectedIngredients]);
+  
 
   const handleAddItem = (ing) => {
     const newIngredient: SelectedIngredient = {

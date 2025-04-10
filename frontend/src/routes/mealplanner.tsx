@@ -56,12 +56,6 @@ function MealPlanner() {
   }, [userMeals])
 
 
-  useEffect(() => {
-    
-    console.log(date.toISOString().split('T')[0])
-  }, [date])
-
-
 
   const [dialogOpen, setDialogOpen] = useState(false);
 

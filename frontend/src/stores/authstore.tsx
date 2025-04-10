@@ -1,5 +1,8 @@
 import { create } from "zustand";
 
+const apiUrl = import.meta.env.VITE_APP_API_URL;
+
+
 type AuthState = {
   user: {
     id: number;
@@ -32,7 +35,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   registerError: null,
   handleLogin: async (email, password) => {
     try {
-      const res = await fetch("http://localhost:5000/login", {
+      const res = await fetch(`${apiUrl}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -54,7 +57,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
   handleRegister: async (username, email, password, age, weight, height) => {
     try {
-      const res = await fetch("http://localhost:5000/register", {
+      const res = await fetch(`${apiUrl}/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -84,7 +87,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   handleLogout: async () => {
     const JWT = localStorage.getItem("token");
     try {
-      const res = await fetch("http://localhost:5000/logout", {
+      const res = await fetch(`${apiUrl}/logout`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

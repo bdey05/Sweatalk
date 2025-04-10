@@ -2,11 +2,13 @@ import { QueryClient, useMutation, useQueryClient } from "@tanstack/react-query"
 import { Meal, Ingredient } from "@/stores/mealstore"
 import { useCalendarStore } from "@/stores/calendarstore"
 
+const apiUrl = import.meta.env.VITE_APP_API_URL;
+
+
 
 export const deleteMeal = async (mealID: number): Promise<Meal> => {
-    console.log(mealID);
     try {
-        const res = await fetch(`http://localhost:5000/deletemeal/${mealID}`, {
+        const res = await fetch(`${apiUrl}/deletemeal/${mealID}`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
@@ -17,7 +19,6 @@ export const deleteMeal = async (mealID: number): Promise<Meal> => {
             throw new Error("Failed to reach endpoint")
         }
         const data = await res.json();
-        console.log(data);
         return data;
     }
     catch (error) {

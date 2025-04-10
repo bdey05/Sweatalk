@@ -21,7 +21,7 @@ export type Ingredient = {
 };
 
 export type Meal = {
-  mealID?: number;
+  id?: number;
   name: string;
   calories: number;
   protein: number;

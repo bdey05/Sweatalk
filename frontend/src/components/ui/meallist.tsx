@@ -17,7 +17,7 @@ const MealList: React.FC<MealListProps> = ({meals}) => {
       ) : (
         
         meals.map((meal) => (
-          <MealCard key={meal.mealID} {...meal} />
+          <MealCard key={meal.id} {...meal} />
         ))
       )}
     </>

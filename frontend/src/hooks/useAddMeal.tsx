@@ -6,11 +6,14 @@ interface MealDate {
     date: string;
 }
 
+const apiUrl = import.meta.env.VITE_APP_API_URL;
+
+
 export const addMeal = async (mealToAdd: MealDate): Promise<string> => {
     const {meal, date} = mealToAdd;
     if (!date) return "Date is missing for the meal";
     try {
-        const res = await fetch("http://localhost:5000/addmeal", {
+        const res = await fetch(`${apiUrl}/addmeal`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -22,7 +25,6 @@ export const addMeal = async (mealToAdd: MealDate): Promise<string> => {
             throw new Error("Failed to reach endpoint")
         }
         const data = await res.text();
-        console.log(data);
         return data;
     }
     catch (error) {

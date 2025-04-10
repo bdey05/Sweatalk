@@ -1,10 +1,14 @@
 import { useQuery } from "@tanstack/react-query"
 import { Meal, Ingredient } from "@/stores/mealstore"
 
+
+const apiUrl = import.meta.env.VITE_APP_API_URL;
+
+
 export const getMeals = async (date: string): Promise<Meal[]> => {
     if (!date) return [];
     try {
-        const res = await fetch("http://localhost:5000/getmeals", {
+        const res = await fetch(`${apiUrl}/getmeals`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -16,7 +20,6 @@ export const getMeals = async (date: string): Promise<Meal[]> => {
             throw new Error("Failed to reach endpoint")
         }
         const data = await res.json();
-        console.log(data);
         return data;
     }
     catch (error) {
