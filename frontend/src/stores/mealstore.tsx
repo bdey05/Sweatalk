@@ -7,13 +7,13 @@ export type ServingUnit = {
 };
 
 export type Ingredient = {
-  ingredientID?: number;
+  id?: number;
   mealID?: number;
   fdcId: number;
-  selectedServingQty: number;
-  selectedServingUnit: string;
+  selected_serving_qty: number;
+  selected_serving_unit: string;
   name: string;
-  servingUnits: ServingUnit[];
+  available_units: ServingUnit[];
   calories?: number;
   protein?: number;
   carbohydrates?: number;
