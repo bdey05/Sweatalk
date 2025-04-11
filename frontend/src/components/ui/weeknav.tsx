@@ -1,12 +1,12 @@
 import React from 'react'
 import { ChevronLeft, ChevronRight, CalendarIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { format, addDays, subDays, startOfWeek, isSameDay, isToday } from "date-fns"
+import { format, addDays, subDays, isSameDay, isToday } from "date-fns"
 import { Button } from "@/components/ui/button"
 import { useCalendarStore } from "@/stores/calendarstore";
 
 const WeekNav = () => {
-  const { date, setDate, weekStart, setWeekStart, currentMonth, setCurrentMonth, getToday } = useCalendarStore()
+  const { date, setDate, weekStart, setWeekStart, setCurrentMonth, getToday } = useCalendarStore()
 
   const weekDays = React.useMemo(() => {
     return Array.from({ length: 7 }).map((_, index) => addDays(weekStart, index))

@@ -1,37 +1,36 @@
 import React from 'react';
 import { useState, useMemo, useEffect, useCallback } from "react";
-import { Plus, Trash2, Edit } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Plus, Trash2 } from "lucide-react";
+import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input"; 
-import { Toggle } from "@/components/ui/toggle";
 import IngredientItem from './ingredientitem';
-import { ServingUnit, Ingredient, Meal } from "@/stores/mealstore";
+import { Ingredient, Meal } from "@/stores/mealstore";
 import MealDialog from "@/components/ui/mealdialog";
 import { useUpdateMeal } from '@/hooks/useUpdateMeal';
 import { useDeleteMeal } from '@/hooks/useDeleteMeal';
 
-export const ingredientNutrition = (ing) => {
-  const selectedUnit = ing?.available_units.find(selIng => selIng.unit === ing.selected_serving_unit);
-  return {
-    "calories": ing?.selected_serving_qty * selectedUnit.calories,
-    "protein": ing?.selected_serving_qty * selectedUnit.protein,
-    "carbohydrates": ing?.selected_serving_qty * selectedUnit.carbohydrates,
-    "fat": ing?.selected_serving_qty * selectedUnit.fat
+export const ingredientNutrition = (ing: Ingredient) => {
+  let selectedUnit; 
+  if (ing.available_units)
+  {
+    selectedUnit = ing?.available_units.find(selIng => selIng.unit === ing.selected_serving_unit);
+  }
+  if (selectedUnit && ing.selected_serving_qty)
+  {
+    return {
+      "calories": ing?.selected_serving_qty * selectedUnit.calories,
+      "protein": ing?.selected_serving_qty * selectedUnit.protein,
+      "carbohydrates": ing?.selected_serving_qty * selectedUnit.carbohydrates,
+      "fat": ing?.selected_serving_qty * selectedUnit.fat
+    }
   }
 }
 
 const MealCard: React.FC<Meal> = ({
   id,
   name,
-  calories, 
-  protein,
-  carbohydrates,
-  fat, 
-  isSaved,
-  date,
-  ingredients, 
-  selected_serving_qty
+  ingredients
 
 }) => {
 
@@ -49,9 +48,6 @@ const MealCard: React.FC<Meal> = ({
         setIngredientsList(ingredients); 
     }, [ingredients]);
   
-    const openDialog = (mode) => {
-      setDialogOpen(true);
-    };
     
       const calcNutrition = useCallback((ingredients: Ingredient[]) => {
         let calories = 0;
@@ -61,10 +57,13 @@ const MealCard: React.FC<Meal> = ({
 
         for (const ig of ingredients) {
           const nutrition = ingredientNutrition(ig);
-          calories += nutrition.calories;
-          protein += nutrition.protein;
-          carbohydrates += nutrition.carbohydrates;
-          fat += nutrition.fat;
+          if (nutrition)
+          {
+            calories += nutrition.calories;
+            protein += nutrition.protein;
+            carbohydrates += nutrition.carbohydrates;
+            fat += nutrition.fat;
+          }
         }
 
         return {
@@ -137,7 +136,7 @@ const MealCard: React.FC<Meal> = ({
     const handleIngredientDelete = useCallback((ingID: number) => {
       const newIngredientsList = ingredientsList.filter(ing => ing.id !== ingID);
       setIngredientsList(newIngredientsList);
-      if (newIngredientsList.length === 0)
+      if (newIngredientsList.length === 0 && id)
       {
         deleteMutation.mutate(id);
       }
@@ -201,7 +200,7 @@ const MealCard: React.FC<Meal> = ({
       <CardContent className="pt-4 pb-2">
         {ingredientsList.length > 0 ? (
           <div className="space-y-2">
-            {ingredientsList.map((ing, index) => (
+            {ingredientsList.map((ing) => (
               <IngredientItem
                key={ing.id}
                ingredient={ing}
@@ -233,7 +232,7 @@ const MealCard: React.FC<Meal> = ({
         <Button
           variant="ghost"
           className="text-destructive hover:text-destructive/90 hover:bg-destructive/10"
-          onClick={() => deleteMutation.mutate(id)}
+          onClick={() => {if (id) deleteMutation.mutate(id)}}
         >
           <Trash2 className="h-4 w-4 mr-2" />
           Delete Meal

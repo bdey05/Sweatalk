@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
   Dialog,
   DialogContent,
@@ -21,7 +21,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Trash2, Plus, Flame, Beef, Wheat, Droplet } from "lucide-react";
 import { useIngredients } from "@/hooks/useIngredients";
-import { ServingUnit, Ingredient, Meal } from "@/stores/mealstore";
+import { Ingredient, SelectedIngredient, Meal } from "@/stores/mealstore";
 import { useCalendarStore } from "@/stores/calendarstore";
 import { useAddMeal } from "@/hooks/useAddMeal";
 import { useUpdateMeal } from "@/hooks/useUpdateMeal";
@@ -43,14 +43,6 @@ type MealDialogProps = {
   currentIngredients?: Ingredient[]
 }
 
-type SelectedIngredient = {
-  fdcId: number    
-  name: string     
-  selectedServingQty: number
-  selectedServingUnit: string
-  servingUnits: ServingUnit[]
-  selectedServingUnitInfo?: ServingUnit
-}
 
 
 const MealDialog: React.FC<MealDialogProps> = ({
@@ -83,23 +75,31 @@ const MealDialog: React.FC<MealDialogProps> = ({
 
   
 
-  const handleAddItem = (ing) => {
+  const handleAddItem = (ing: Ingredient) => {
+    if (ing.fdcId === undefined || ing.fdcId === null)
+    {
+      console.warn("Attempted to add an ingredient with an invalid fdcId");
+      return;
+    }
+
+    const firstServing = ing.servings?.[0];
+
     const newIngredient: SelectedIngredient = {
       fdcId: ing.fdcId, 
       name: ing.name, 
       selectedServingQty: 1, 
-      selectedServingUnit: ing.servings[0].unit,
-      servingUnits: ing.servings,
-      selectedServingUnitInfo: ing.servings[0] 
+      selectedServingUnit: firstServing?.unit ?? "",
+      servingUnits: ing.servings ?? [],
+      selectedServingUnitInfo: ing.servings![0] 
     }
     setSelectedIngredients(prevIngredients => [...prevIngredients, newIngredient]);
   }
 
-  const handleUnselect = (selectedID) => {
+  const handleUnselect = (selectedID: number) => {
     setSelectedIngredients(currentIngredients => currentIngredients.filter(s => s.fdcId !== selectedID));
   }
 
-  const handleUnitChange = (id, newUnit) => {
+  const handleUnitChange = (id: number, newUnit: string) => {
     setSelectedIngredients(currentItems => 
       currentItems.map(item => {
         if (item.fdcId === id)
@@ -116,7 +116,7 @@ const MealDialog: React.FC<MealDialogProps> = ({
     )
   }
 
-  const handleQuantityChange = (id, newQuantity) => {
+  const handleQuantityChange = (id: number, newQuantity: number) => {
     setSelectedIngredients(currentItems => 
       currentItems.map(item =>
         item.fdcId === id ? 
@@ -142,15 +142,18 @@ const MealDialog: React.FC<MealDialogProps> = ({
   }, [selectedIngredients, title, mode]);
 
 
-  const ingredientNutrition = (id) => {
+  const ingredientNutrition = useCallback((id: number) => {
     const ing = selectedIngredients.find(selIng => selIng.fdcId === id);
-    return {
-      "calories": ing?.selectedServingQty * ing?.selectedServingUnitInfo.calories,
-      "protein": ing?.selectedServingQty * ing?.selectedServingUnitInfo.protein,
-      "carbohydrates": ing?.selectedServingQty * ing?.selectedServingUnitInfo.carbohydrates,
-      "fat": ing?.selectedServingQty * ing?.selectedServingUnitInfo.fat
+    if (ing && ing.selectedServingUnitInfo)
+    {
+      return {
+        "calories": ing?.selectedServingQty * ing?.selectedServingUnitInfo.calories,
+        "protein": ing?.selectedServingQty * ing?.selectedServingUnitInfo.protein,
+        "carbohydrates": ing?.selectedServingQty * ing?.selectedServingUnitInfo.carbohydrates,
+        "fat": ing?.selectedServingQty * ing?.selectedServingUnitInfo.fat
+      }
     }
-  }
+  }, [selectedIngredients]);
 
   const mealNutrition = useMemo(() => {
     let calories, protein, carbohydrates, fat;
@@ -163,17 +166,21 @@ const MealDialog: React.FC<MealDialogProps> = ({
     }
     else 
     {
-      calories = currentNutrition?.calories;
-      protein = currentNutrition?.protein;
-      carbohydrates = currentNutrition?.carbohydrates;
-      fat = currentNutrition?.fat;
+      calories = currentNutrition?.calories ?? 0;
+      protein = currentNutrition?.protein ?? 0;
+      carbohydrates = currentNutrition?.carbohydrates ?? 0;
+      fat = currentNutrition?.fat ?? 0;
     }
-    for (let seling of selectedIngredients)
+    for (const seling of selectedIngredients)
     {
-      calories += ingredientNutrition(seling.fdcId).calories;
-      protein += ingredientNutrition(seling.fdcId).protein;
-      carbohydrates += ingredientNutrition(seling.fdcId).carbohydrates;
-      fat += ingredientNutrition(seling.fdcId).fat;
+      const calculatedNutrition = ingredientNutrition(seling.fdcId);
+      if (calculatedNutrition)
+      {
+        calories += calculatedNutrition.calories;
+        protein += calculatedNutrition.protein;
+        carbohydrates += calculatedNutrition.carbohydrates;
+        fat += calculatedNutrition.fat;
+      }
     }
     
     return {
@@ -182,7 +189,7 @@ const MealDialog: React.FC<MealDialogProps> = ({
       "carbohydrates": carbohydrates,
       "fat": fat
     }
-  }, [selectedIngredients, ingredientNutrition]);
+  }, [selectedIngredients, ingredientNutrition, currentNutrition?.calories, currentNutrition?.protein, currentNutrition?.carbohydrates, currentNutrition?.fat, mode]);
 
   const handleSave = () => {
     if (mode === "addMeal")
@@ -201,11 +208,11 @@ const MealDialog: React.FC<MealDialogProps> = ({
     }
     else 
     {
-      let updatedIngredients = [...currentIngredients];
+      const updatedIngredients = [...(currentIngredients ?? [])];
 
-      for (let ing of selectedIngredients)
+      for (const ing of selectedIngredients)
       {
-        let ingToAdd = {
+        const ingToAdd = {
           "available_units": ing.servingUnits,
           "fdc_id": ing.fdcId,
           "name": ing.name,
@@ -216,7 +223,7 @@ const MealDialog: React.FC<MealDialogProps> = ({
       }
 
       const updatedMeal: Meal = {
-        name: mealName,
+        name: mealName ?? "",
         id: mealId,
         calories: mealNutrition.calories,
         protein: mealNutrition.protein,
@@ -374,7 +381,7 @@ const MealDialog: React.FC<MealDialogProps> = ({
                           step="0.1" 
                           className="h-8 text-sm mt-1 w-full" 
                           value={sig.selectedServingQty} 
-                          onChange={(e) => handleQuantityChange(sig.fdcId, e.target.value)}
+                          onChange={(e) => handleQuantityChange(sig.fdcId, parseFloat(e.target.value))}
                         />
                       </div>
 
@@ -407,16 +414,16 @@ const MealDialog: React.FC<MealDialogProps> = ({
                       <p className="text-muted-foreground mb-1">Nutrition Information:</p>
                       <div className="grid grid-cols-2 gap-x-4 gap-y-1">
                           <span>Calories:</span>
-                          <span className="text-right font-medium">{Math.round(nutrition.calories)} kcal</span>
+                          <span className="text-right font-medium">{Math.round(nutrition?.calories ?? 0)} kcal</span>
 
                           <span>Protein:</span>
-                          <span className="text-right font-medium">{Math.round(nutrition.protein)} g</span>
+                          <span className="text-right font-medium">{Math.round(nutrition?.protein ?? 0)} g</span>
 
                           <span>Carbohydrates:</span>
-                          <span className="text-right font-medium">{Math.round(nutrition.carbohydrates)} g</span>
+                          <span className="text-right font-medium">{Math.round(nutrition?.carbohydrates ?? 0)} g</span>
 
                           <span>Fat:</span>
-                          <span className="text-right font-medium">{Math.round(nutrition.fat)} g</span>
+                          <span className="text-right font-medium">{Math.round(nutrition?.fat ?? 0)} g</span>
                       </div>
                      </div>
                   </div>

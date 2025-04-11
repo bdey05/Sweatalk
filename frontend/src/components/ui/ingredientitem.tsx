@@ -3,7 +3,7 @@ import { Utensils, Trash2} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ServingUnit, Ingredient } from '@/stores/mealstore';
+import { Ingredient } from '@/stores/mealstore';
 import { ingredientNutrition } from './mealcard';
     
 type IngredientItemProps = {
@@ -31,13 +31,13 @@ type IngredientItemProps = {
     const nutrition = ingredientNutrition(ingredient);
 
     const handleQuantityChange = () => {
-      if (qty === '' || qty <= 0)
+      if (qty === undefined || qty <= 0)
       {
         setQty(ingredient.selected_serving_qty);
       }
       else 
       {
-        if (qty !== ingredient.selected_serving_qty)
+        if (qty !== ingredient.selected_serving_qty && ingredient.id)
         {
           onQuantityChange(ingredient.id, qty);
         }
@@ -46,11 +46,17 @@ type IngredientItemProps = {
   
     const handleUnitChange = (newUnit: string) => {
        setUnit(newUnit);
-       onUnitChange(ingredient.id, newUnit); 
+       if (ingredient.id)
+       {
+          onUnitChange(ingredient.id, newUnit); 
+       }
     };
   
     const handleDeleteClick = () => {
-      onDelete(ingredient.id); 
+      if (ingredient.id)
+      {
+          onDelete(ingredient.id); 
+      }
     }
 
     return (
@@ -63,10 +69,10 @@ type IngredientItemProps = {
         <div className="flex-1 min-w-0">
           <h4 className="text-sm font-medium">{ingredient.name}</h4>
           <p className="text-xs text-muted-foreground mt-0.5">
-            {Math.round(nutrition.calories)} kcal
-            • P: {Math.round(nutrition.protein)}g
-            • C: {Math.round(nutrition.carbohydrates)}g
-            • F: {Math.round(nutrition.fat)}g
+            {Math.round(nutrition?.calories ?? 0)} kcal
+            • P: {Math.round(nutrition?.protein ?? 0)}g
+            • C: {Math.round(nutrition?.carbohydrates ?? 0)}g
+            • F: {Math.round(nutrition?.fat ?? 0)}g
           </p>
         </div>
       </div>
@@ -75,7 +81,7 @@ type IngredientItemProps = {
         <Input
           type="number"
           value={qty} 
-          onChange={(e) => setQty(e.target.value)}
+          onChange={(e) => setQty(parseFloat(e.target.value))}
           onBlur={handleQuantityChange}
           className="h-8 text-sm w-[70px] flex-shrink-0" 
           min="0"

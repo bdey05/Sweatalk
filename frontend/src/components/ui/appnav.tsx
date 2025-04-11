@@ -56,8 +56,6 @@ const AppNav: React.FC<AppNavProps> = ({ dailyNutrition }) => {
                 <SidebarMenuItem key={item.label}>
                   <SidebarMenuButton
                     asChild
-                    isActive={item.isActive}
-                    className={item.isActive ? "bg-sidebar-accent text-sidebar-accent-foreground" : ""}
                   >
                     <Link
                       to={item.to}

@@ -1,9 +1,5 @@
-import { useAuthStore } from '@/stores/authstore'
-import React from 'react'
-
 const Profile = () => {
 
-  //const user = useAuthStore((state) => state.user);
   const user = JSON.parse(localStorage.getItem("user") || "null");
   let feet;
   let inches;

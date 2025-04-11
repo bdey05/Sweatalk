@@ -1,4 +1,3 @@
-import React, { useEffect } from "react";
 import { CalendarIcon } from "lucide-react";
 
 import { Calendar } from "@/components/ui/calendar";
@@ -7,14 +6,12 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarProvider,
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import Profile from "./profile";
-import { useState } from "react";
 import { useCalendarStore } from "@/stores/calendarstore";
 
 const RightSidebar = () => {
@@ -49,8 +46,10 @@ const RightSidebar = () => {
                 mode="single"
                 selected={date}
                 onSelect={(d) => {
-                  setDate(d);
-                  setWeekStart(d);
+                  if (d) {
+                    setDate(d);
+                    setWeekStart(d);
+                  }
                 }}
                 month={currentMonth}
                 onMonthChange={setCurrentMonth}

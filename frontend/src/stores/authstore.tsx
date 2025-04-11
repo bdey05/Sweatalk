@@ -51,7 +51,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({ user: data["userObj"], token: data["token"] });
       return true;
     } catch (error) {
-      set({ loginError: error });
+      set({ loginError: error as Error});
       return false;
     }
   },
@@ -80,7 +80,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({ user: data["userObj"], token: data["token"] });
       return true;
     } catch (error) {
-      set({ registerError: error });
+      set({ registerError: error as Error });
       return false;
     }
   },

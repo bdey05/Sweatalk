@@ -1,6 +1,6 @@
 import React from 'react'
 import MealCard from "@/components/ui/mealcard";
-import { ServingUnit, Ingredient, Meal } from "@/stores/mealstore";
+import { Meal } from "@/stores/mealstore";
 
 
 type MealListProps = {

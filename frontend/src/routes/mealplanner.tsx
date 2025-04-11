@@ -4,15 +4,11 @@ import RightSidebar from "@/components/ui/rightsidebar";
 import WeekNav from "@/components/ui/weeknav";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash } from "lucide-react";
-import MealCard from "@/components/ui/mealcard";
-import { useEffect, useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import MealList from "@/components/ui/meallist";
 import MealDialog from "@/components/ui/mealdialog";
-import { useIngredients } from "@/hooks/useIngredients";
-import { ServingUnit, Ingredient, Meal } from "@/stores/mealstore";
 import { useCalendarStore } from "@/stores/calendarstore";
 import { useGetMeals } from "@/hooks/useGetMeals";
-import { useAddMeal } from "@/hooks/useAddMeal";
 import { useDeleteMeal } from "@/hooks/useDeleteMeal";
 
 export const Route = createFileRoute("/mealplanner")({
@@ -28,7 +24,7 @@ function MealPlanner() {
 
   const date = useCalendarStore((state) => state.date)
 
-  const { data: userMeals = [], isLoading, isError} = useGetMeals(date.toISOString().split('T')[0])
+  const { data: userMeals = []} = useGetMeals(date.toISOString().split('T')[0])
 
   const deleteMutation = useDeleteMeal();
 
@@ -59,14 +55,14 @@ function MealPlanner() {
 
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const openDialog = (mode) => {
-    setDialogOpen(true);
-  };
 
   const handleDeleteAll = () => {
     for (const meal of userMeals)
     {
-      deleteMutation.mutate(meal.id);
+      if (meal.id)
+      {
+        deleteMutation.mutate(meal.id);
+      }
     }
   }
 
