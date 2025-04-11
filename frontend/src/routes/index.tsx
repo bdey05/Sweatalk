@@ -30,7 +30,7 @@ function Index() {
           <img src={landing} className="w-full max-w-4xl" />
         </div>
       </div>
-      <div className="flex flex-col px-[4%] md:flex-row justify-center items-center gap-10 md:gap-[5%] my-10">
+     {/* <div className="flex flex-col px-[4%] md:flex-row justify-center items-center gap-10 md:gap-[5%] my-10">
         <div className="text-center md:text-left w-full md:w-1/3">
           <Dumbbell className="h-20 w-20 text-primary mx-auto md:mx-0" />
           <h3 className="text-2xl font-semibold my-2">Track your workouts</h3>
@@ -52,7 +52,7 @@ function Index() {
             Exchange recipes and workouts with the community
           </p>
         </div>
-      </div>
+      </div>*/}
     </div>
   );
 }
