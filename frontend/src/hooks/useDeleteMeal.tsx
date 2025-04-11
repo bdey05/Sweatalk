@@ -1,5 +1,5 @@
-import { QueryClient, useMutation, useQueryClient } from "@tanstack/react-query"
-import { Meal, Ingredient } from "@/stores/mealstore"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { Meal } from "@/stores/mealstore"
 import { useCalendarStore } from "@/stores/calendarstore"
 
 const apiUrl = import.meta.env.VITE_APP_API_URL;
@@ -12,7 +12,7 @@ export const deleteMeal = async (mealID: number): Promise<Meal> => {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
-                "x-access-tokens": localStorage.getItem("token")
+                "x-access-tokens": localStorage.getItem("token") || ""
             }
         })
         if (!res.ok){
@@ -22,7 +22,12 @@ export const deleteMeal = async (mealID: number): Promise<Meal> => {
         return data;
     }
     catch (error) {
-        console.log(error.message)
+        if (error instanceof Error) {
+            console.error("Error in addMeal:", error.message);
+          } 
+        else {
+            console.error("Unknown error in addMeal:", error);
+          }
     }
 
 }
@@ -33,7 +38,7 @@ export const useDeleteMeal = () => {
 
     return useMutation({
         mutationFn: deleteMeal,
-        onSuccess: (data, variables) => {
+        onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['meals', date.toISOString().split('T')[0]] })
         },
         onError: (error) => {

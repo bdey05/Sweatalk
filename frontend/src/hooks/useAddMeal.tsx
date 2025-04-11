@@ -1,7 +1,7 @@
-import { QueryClient, useMutation, useQueryClient } from "@tanstack/react-query"
-import { Meal, Ingredient } from "@/stores/mealstore"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { Meal } from "@/stores/mealstore"
 
-interface MealDate {
+type MealDate = {
     meal: Meal;
     date: string;
 }
@@ -17,18 +17,23 @@ export const addMeal = async (mealToAdd: MealDate): Promise<string> => {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "x-access-tokens": localStorage.getItem("token")
+                "x-access-tokens": localStorage.getItem("token") || ""
             },
             body: JSON.stringify({"meal": meal, "date": date})
         })
         if (!res.ok){
             throw new Error("Failed to reach endpoint")
         }
-        const data = await res.text();
+        const data = await res.json();
         return data;
     }
     catch (error) {
-        console.log(error.message)
+        if (error instanceof Error) {
+            console.error("Error in addMeal:", error.message);
+          } 
+          else {
+            console.error("Unknown error in addMeal:", error);
+          }
     }
 
 }
@@ -38,7 +43,7 @@ export const useAddMeal = () => {
 
     return useMutation({
         mutationFn: addMeal,
-        onSuccess: (data, variables) => {
+        onSuccess: (data, variables: MealDate) => {
             queryClient.invalidateQueries({ queryKey: ['meals', variables.date] })
         },
         onError: (error) => {

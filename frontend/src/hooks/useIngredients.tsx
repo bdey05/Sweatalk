@@ -11,7 +11,7 @@ export const getIngredients = async (query: string): Promise<Ingredient[]> => {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "x-access-tokens": localStorage.getItem("token")
+                "x-access-tokens": localStorage.getItem("token") || ""
             },
             body: JSON.stringify({"query": query})
         })
@@ -22,7 +22,11 @@ export const getIngredients = async (query: string): Promise<Ingredient[]> => {
         return data["items"];
     }
     catch (error) {
-        console.log(error.message)
+        if (error instanceof Error) {
+            console.error("Error in addMeal:", error.message);
+          } else {
+            console.error("Unknown error in addMeal:", error);
+          }
     }
 
 }

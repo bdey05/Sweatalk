@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { Meal, Ingredient } from "@/stores/mealstore"
+import { Meal } from "@/stores/mealstore"
 
 
 const apiUrl = import.meta.env.VITE_APP_API_URL;
@@ -12,9 +12,9 @@ export const getMeals = async (date: string): Promise<Meal[]> => {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "x-access-tokens": localStorage.getItem("token")
+                "x-access-tokens": localStorage.getItem("token") || ""
             },
-            body: JSON.stringify({"date": date})
+            body: JSON.stringify({"date": date}) 
         })
         if (!res.ok){
             throw new Error("Failed to reach endpoint")
@@ -23,7 +23,11 @@ export const getMeals = async (date: string): Promise<Meal[]> => {
         return data;
     }
     catch (error) {
-        console.log(error.message)
+        if (error instanceof Error) {
+            console.error("Error in addMeal:", error.message);
+          } else {
+            console.error("Unknown error in addMeal:", error);
+          }
     }
 
 }
