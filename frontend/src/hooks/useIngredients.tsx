@@ -23,10 +23,11 @@ export const getIngredients = async (query: string): Promise<Ingredient[]> => {
     }
     catch (error) {
         if (error instanceof Error) {
-            console.error("Error in addMeal:", error.message);
+            console.error("Error in getIngredients:", error.message);
           } else {
-            console.error("Unknown error in addMeal:", error);
+            console.error("Unknown error in getIngredients:", error);
           }
+          throw error;
     }
 
 }

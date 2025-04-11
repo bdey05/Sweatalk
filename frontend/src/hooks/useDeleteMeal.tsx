@@ -23,11 +23,12 @@ export const deleteMeal = async (mealID: number): Promise<Meal> => {
     }
     catch (error) {
         if (error instanceof Error) {
-            console.error("Error in addMeal:", error.message);
+            console.error("Error in deleteMeal:", error.message);
           } 
         else {
-            console.error("Unknown error in addMeal:", error);
+            console.error("Unknown error in deleteMeal:", error);
           }
+          throw error;
     }
 
 }

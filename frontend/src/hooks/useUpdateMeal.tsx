@@ -14,7 +14,7 @@ export const updateMeal = async (mealToUpdate: Meal): Promise<Meal> => {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          "x-access-tokens": localStorage.getItem("token"),
+          "x-access-tokens": localStorage.getItem("token") || "",
         },
         body: JSON.stringify(mealToUpdate),
       }
@@ -25,8 +25,13 @@ export const updateMeal = async (mealToUpdate: Meal): Promise<Meal> => {
     const data = await res.json();
     return data;
   } catch (error) {
-    console.log(error.message);
-  }
+    if (error instanceof Error) {
+        console.error("Error in updateMeal:", error.message);
+      } else {
+        console.error("Unknown error in updateMeal:", error);
+      }
+      throw error;
+}
 };
 
 export const useUpdateMeal = () => {

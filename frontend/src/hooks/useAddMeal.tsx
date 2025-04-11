@@ -34,7 +34,10 @@ export const addMeal = async (mealToAdd: MealDate): Promise<string> => {
           else {
             console.error("Unknown error in addMeal:", error);
           }
+          throw error;
+
     }
+    
 
 }
 
@@ -44,6 +47,7 @@ export const useAddMeal = () => {
     return useMutation({
         mutationFn: addMeal,
         onSuccess: (data, variables: MealDate) => {
+            console.log("Success:", data);
             queryClient.invalidateQueries({ queryKey: ['meals', variables.date] })
         },
         onError: (error) => {

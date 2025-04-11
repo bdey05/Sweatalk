@@ -8,15 +8,25 @@ type MealListProps = {
 }
 
 const MealList: React.FC<MealListProps> = ({meals}) => {
+
+  const sortedMeals = [...meals].sort((mealA, mealB) => {
+    if (mealA.id && mealB.id)
+    {
+      return mealA.id - mealB.id;
+    }
+    return 0;
+  });
+
+
   return (
     <>
-      {meals.length === 0 ? (
+      {sortedMeals.length === 0 ? (
         <p className="mt-4 text-muted-foreground">
           No Meals Tracked For This Day
         </p>
       ) : (
         
-        meals.map((meal) => (
+        sortedMeals.map((meal) => (
           <MealCard key={meal.id} {...meal} />
         ))
       )}

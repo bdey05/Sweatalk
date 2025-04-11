@@ -24,10 +24,14 @@ export const getMeals = async (date: string): Promise<Meal[]> => {
     }
     catch (error) {
         if (error instanceof Error) {
-            console.error("Error in addMeal:", error.message);
+            console.error("Error in getMeals:", error.message);
           } else {
-            console.error("Unknown error in addMeal:", error);
+            console.error("Unknown error in getMeals:", error);
           }
+
+          throw error;
+
+
     }
 
 }
