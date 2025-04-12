@@ -21,10 +21,11 @@ export const Route = createFileRoute("/mealplanner")({
 });
 
 function MealPlanner() {
+  const date = useCalendarStore((state) => state.date);
 
-  const date = useCalendarStore((state) => state.date)
-
-  const { data: userMeals = []} = useGetMeals(date.toISOString().split('T')[0])
+  const { data: userMeals = [] } = useGetMeals(
+    date.toISOString().split("T")[0]
+  );
 
   const deleteMutation = useDeleteMeal();
 
@@ -34,42 +35,35 @@ function MealPlanner() {
     let carbohydrates = 0;
     let fat = 0;
 
-    for (const meal of userMeals)
-    {
+    for (const meal of userMeals) {
       calories += meal.calories;
       protein += meal.protein;
       carbohydrates += meal.carbohydrates;
       fat += meal.fat;
-    };
+    }
 
     return {
       calories: Math.round(calories),
       protein: Math.round(protein),
       carbohydrates: Math.round(carbohydrates),
-      fat: Math.round(fat)
-    }
-
-  }, [userMeals])
-
-
+      fat: Math.round(fat),
+    };
+  }, [userMeals]);
 
   const [dialogOpen, setDialogOpen] = useState(false);
 
-
   const handleDeleteAll = () => {
-    for (const meal of userMeals)
-    {
-      if (meal.id)
-      {
+    for (const meal of userMeals) {
+      if (meal.id) {
         deleteMutation.mutate(meal.id);
       }
     }
-  }
+  };
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
       <div className="flex-shrink-0">
-        <AppNav dailyNutrition={dailyNutrition}/>
+        <AppNav dailyNutrition={dailyNutrition} />
       </div>
 
       <div className="flex-1 flex flex-col overflow-hidden">
@@ -94,7 +88,7 @@ function MealPlanner() {
               Delete All Meals
             </Button>
           </div>
-          <div className="mt-6 space-y-4 w-full max-w-2xl lg:max-w-3xl flex flex-col items-center"> 
+          <div className="mt-6 space-y-4 w-full max-w-2xl lg:max-w-3xl flex flex-col items-center">
             <MealList meals={userMeals} />
           </div>
         </main>

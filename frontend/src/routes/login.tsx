@@ -1,15 +1,11 @@
-import {
-  createFileRoute,
-  Link,
-  useNavigate,
-} from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Navbar from "@/components/ui/navbar";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/stores/authstore";
-import { FormEvent } from 'react';
+import { FormEvent } from "react";
 
 export const Route = createFileRoute("/login")({
   component: Login,
@@ -31,13 +27,13 @@ function Login() {
 
   useEffect(() => {
     resetErrors();
-  }, [resetErrors])
+  }, [resetErrors]);
 
   useEffect(() => {
     if (token) {
       navigate({ to: "/mealplanner" });
     }
-  }, [token, navigate])
+  }, [token, navigate]);
 
   return (
     <div className="min-h-screen flex flex-col">

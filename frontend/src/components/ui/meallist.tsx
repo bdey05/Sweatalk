@@ -1,22 +1,18 @@
-import React from 'react'
+import React from "react";
 import MealCard from "@/components/ui/mealcard";
 import { Meal } from "@/stores/mealstore";
 
-
 type MealListProps = {
-  meals: Meal[]
-}
+  meals: Meal[];
+};
 
-const MealList: React.FC<MealListProps> = ({meals}) => {
-
+const MealList: React.FC<MealListProps> = ({ meals }) => {
   const sortedMeals = [...meals].sort((mealA, mealB) => {
-    if (mealA.id && mealB.id)
-    {
+    if (mealA.id && mealB.id) {
       return mealA.id - mealB.id;
     }
     return 0;
   });
-
 
   return (
     <>
@@ -25,10 +21,7 @@ const MealList: React.FC<MealListProps> = ({meals}) => {
           No Meals Tracked For This Day
         </p>
       ) : (
-        
-        sortedMeals.map((meal) => (
-          <MealCard key={meal.id} {...meal} />
-        ))
+        sortedMeals.map((meal) => <MealCard key={meal.id} {...meal} />)
       )}
     </>
   );

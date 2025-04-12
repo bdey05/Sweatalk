@@ -5,8 +5,7 @@ import { Label } from "@/components/ui/label";
 import Navbar from "@/components/ui/navbar";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/stores/authstore";
-import { FormEvent } from 'react';
-
+import { FormEvent } from "react";
 
 export const Route = createFileRoute("/register")({
   component: Register,
@@ -95,7 +94,9 @@ function Register() {
                     "Username must start with a letter"
                   )
                 }
-                onInput={(e) => (e.target as HTMLInputElement).setCustomValidity("")}
+                onInput={(e) =>
+                  (e.target as HTMLInputElement).setCustomValidity("")
+                }
                 onChange={(e) => setUsername(e.target.value)}
                 required
               />
@@ -114,7 +115,9 @@ function Register() {
                     "Password must be at least 8 characters with at least 1 uppercase letter, 1 lowercase letter, 1 digit, and 1 special character"
                   )
                 }
-                onInput={(e) => (e.target as HTMLInputElement).setCustomValidity("")}
+                onInput={(e) =>
+                  (e.target as HTMLInputElement).setCustomValidity("")
+                }
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />

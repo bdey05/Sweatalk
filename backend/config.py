@@ -13,6 +13,7 @@ class Config:
     USDA_KEY = os.environ.get("USDA_KEY")
     USDA_SEARCH_URL = os.environ.get("USDA_SEARCH_URL")
     USDA_FOOD_DETAIL_URL = os.environ.get("USDA_FOOD_DETAIL_URL")
+    USDA_FOODS_URL = os.environ.get("USDA_FOODS_URL")
 
 
 class ConfigDevelopment(Config):

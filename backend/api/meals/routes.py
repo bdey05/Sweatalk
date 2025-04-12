@@ -24,7 +24,7 @@ def ingredients(current_user):
 
     USDA_KEY = current_app.config.get("USDA_KEY")
     USDA_SEARCH_URL = current_app.config.get("USDA_SEARCH_URL")
-    USDA_FOOD_DETAIL_URL = current_app.config.get("USDA_FOOD_DETAIL_URL")
+    USDA_FOODS_URL = current_app.config.get("USDA_FOODS_URL")
 
     headers = {"Accept": "application/json"}
 
@@ -38,56 +38,60 @@ def ingredients(current_user):
 
     try:
         search_res = requests.get(
-            USDA_SEARCH_URL, params=search_params, headers=headers
+            USDA_SEARCH_URL, params=search_params, headers=headers, timeout=10
         )
         search_res.raise_for_status()
         search_data = search_res.json()
-    except request.RequestException:
-        return jsonify({"Error": "Error processing search results"}, 500)
+    except requests.exceptions.RequestException as e:
+        return jsonify({"Error": {e}}), 500
 
     foods = search_data.get("foods", [])
     if not foods:
-        return jsonify({"No foods found"}), 200
+        return jsonify({"Error": "No foods found for the given query."}), 200
+
+    fdc_ids_to_fetch = list(
+        set(food.get("fdcId") for food in foods if food.get("fdcId"))
+    )
+
+    detail_params = {
+        "api_key": USDA_KEY,
+        "fdcIds": fdc_ids_to_fetch,
+        "nutrients": [
+            NUTRIENT_ID_CALORIES,
+            NUTRIENT_ID_PROTEIN,
+            NUTRIENT_ID_FAT,
+            NUTRIENT_ID_CARBS,
+        ],
+        "format": "full",
+    }
+
+    try:
+        detail_res = requests.get(
+            USDA_FOODS_URL, params=detail_params, headers=headers, timeout=20
+        )
+        detail_res.raise_for_status()
+        detailed_foods_list = detail_res.json()
+    except requests.exceptions.RequestException as e:
+        return jsonify({"Error": {e}}), 500
 
     detailed_food_results = []
-    processed_fdc_ids = set()
+    for food_detail in detailed_foods_list:
+        fdcId = food_detail.get("fdcId")
 
-    for food in foods:
+        data_type = food_detail.get("dataType")
+        brand_name = food_detail.get("brandName")
+        description = food_detail.get("description")
+        food_name = description
 
-        fdcId = food.get("fdcId")
-
-        if not fdcId or fdcId in processed_fdc_ids:
+        if (
+            data_type == "Branded"
+            and brand_name
+            and brand_name.strip()
+            and brand_name.strip().lower() != "none"
+        ):
+            food_name = f"{brand_name.strip()} {str(description)}"
+        if "none" in food_name.lower() or "nfs" in food_name.lower():
             continue
-
-        processed_fdc_ids.add(fdcId)
-        detail_url = str(USDA_FOOD_DETAIL_URL) + str(fdcId)
-
-        detail_params = {
-            "api_key": USDA_KEY,
-            "nutrients": [
-                NUTRIENT_ID_CALORIES,
-                NUTRIENT_ID_PROTEIN,
-                NUTRIENT_ID_FAT,
-                NUTRIENT_ID_CARBS,
-            ],
-        }
-
-        try:
-            detail_res = requests.get(detail_url, params=detail_params, headers=headers)
-            detail_res.raise_for_status()
-            food_detail = detail_res.json()
-
-        except request.RequestException:
-            continue
-
-        if food_detail.get("dataType") == "Branded":
-            food_name = (
-                str(food_detail.get("brandName"))
-                + " "
-                + str(food_detail.get("description"))
-            )
-        else:
-            food_name = food_detail.get("description", "N/A")
 
         nutrients_map = {
             n.get("nutrient", {}).get("number"): n
