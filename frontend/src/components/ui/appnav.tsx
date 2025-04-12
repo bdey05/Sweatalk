@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ModeToggle } from "@/components/mode-toggle";
-import { DumbbellIcon, LogOut, Utensils } from "lucide-react";
+import { LogOut, Utensils } from "lucide-react";
 
 import {
   Sidebar,
