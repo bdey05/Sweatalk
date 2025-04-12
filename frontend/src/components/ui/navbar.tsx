@@ -9,7 +9,7 @@ const Navbar = () => {
         <nav className="flex flex-col md:flex-row items-center justify-between h-auto md:h-14">
             <div className="flex flex-col md:flex-row items-center justify-between h-auto md:h-14">
                 <Link to="/" className="text-3xl md:text-4xl font-bold text-primary">
-                    Sweatalk
+                    Jotmeal
                 </Link>
             </div>
             <div className="flex items-center gap-3 md:gap-5 mt-3 md:mt-0">   

@@ -17,10 +17,10 @@ function Index() {
       <div className="w-full mx-5 my-3 px-12 py-5 flex flex-col gap-12 md:flex-row items-center justify-center">
         <div className="text-center md:text-left md:w-1/2">
           <h1 className="font-bold text-5xl m-5">
-            The social media application for fitness enthusiasts
+            The meal tracker application for fitness enthusiasts 
           </h1>
           <p className="text-xl m-5">
-            Connect with your friends, anytime, any meal, any workout
+            Track your meals and get a nutrition breakdown
           </p>
           <Button variant="destructive" className="mx-5 text-lg">
             <Link to="/register">Get Started</Link>
