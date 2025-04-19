@@ -181,7 +181,7 @@
 }
 
 
-
+/*
 * {
   scrollbar-width: thin;
   scrollbar-color: hsl(var(--muted-foreground)) hsl(var(--background));
@@ -207,3 +207,18 @@
   background-color: hsl(var(--primary));
 }
 
+*/
+::-webkit-scrollbar {
+  width: 0px;  
+  height: 0px; 
+  background: transparent; 
+}
+
+
+
+
+* {
+  scrollbar-width: none; 
+ 
+  -ms-overflow-style: none;
+}

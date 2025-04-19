@@ -67,14 +67,16 @@ const IngredientItem: React.FC<IngredientItemProps> = ({
   };
 
   return (
-    <div className="flex items-center justify-between py-2 border-b border-muted last:border-0 group gap-3">
-      <div className="flex items-center flex-grow-[1] mr-2 min-w-0">
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-2 border-b border-muted last:border-0 group gap-2 sm:gap-3">
+      <div className="flex items-center flex-grow-[1] mr-0 sm:mr-2 min-w-0 w-full sm:w-auto">
         <div className="bg-border p-2 rounded-lg mr-3 flex-shrink-0">
           <Utensils className="h-5 w-5 text-primary" />
         </div>
         <div className="flex-1 min-w-0">
-          <h4 className="text-sm font-medium">{ingredient.name}</h4>
-          <p className="text-xs text-muted-foreground mt-0.5">
+          <h4 className="text-sm font-medium truncate pr-1">
+            {ingredient.name}
+          </h4>
+          <p className="text-xs text-muted-foreground mt-0.5 overflow-hidden whitespace-nowrap text-ellipsis sm:overflow-visible sm:whitespace-normal">
             {Math.round(nutrition?.calories ?? 0)} kcal • P:{" "}
             {Math.round(nutrition?.protein ?? 0)}g • C:{" "}
             {Math.round(nutrition?.carbohydrates ?? 0)}g • F:{" "}
@@ -83,13 +85,13 @@ const IngredientItem: React.FC<IngredientItemProps> = ({
         </div>
       </div>
 
-      <div className="flex items-center gap-2 flex-shrink-0">
+      <div className="flex items-center gap-2 w-full sm:w-auto flex-shrink-0 pl-0 sm:pl-[44px]">
         <Input
           type="number"
           value={qty}
           onChange={(e) => setQty(parseFloat(e.target.value))}
           onBlur={handleQuantityChange}
-          className="h-8 text-sm w-[70px] flex-shrink-0"
+          className="h-8 text-sm w-16 shrink-0"
           min="0"
           step="0.1"
           placeholder="Qty"
@@ -100,26 +102,27 @@ const IngredientItem: React.FC<IngredientItemProps> = ({
           onValueChange={(newUnit) => handleUnitChange(newUnit)}
         >
           <SelectTrigger
-            className="h-8 text-sm w-[240px] flex-shrink-0"
+            className="h-8 text-sm w-[235px] shrink-0"
             aria-label={`Unit for ${ingredient.name}`}
           >
             <SelectValue placeholder="Unit" />
           </SelectTrigger>
           <SelectContent>
-            {ingredient.available_units?.map((unit) => (
-              <SelectItem key={unit.unit} value={unit.unit} className="text-sm">
-                {unit.unit}
+            {ingredient.available_units?.map((unitOption) => (
+              <SelectItem
+                key={unitOption.unit}
+                value={unitOption.unit}
+                className="text-sm"
+              >
+                {unitOption.unit}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
-      </div>
-
-      <div className="flex-shrink-0 w-8">
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8 text-destructive opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity"
+          className="h-8 w-8 text-destructive opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity shrink-0"
           onClick={handleDeleteClick}
           aria-label={`Delete ${ingredient.name}`}
         >

@@ -10,6 +10,7 @@ import MealDialog from "@/components/ui/mealdialog";
 import { useCalendarStore } from "@/stores/calendarstore";
 import { useGetMeals } from "@/hooks/useGetMeals";
 import { useDeleteMeal } from "@/hooks/useDeleteMeal";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/mealplanner")({
   beforeLoad: async () => {
@@ -66,36 +67,45 @@ function MealPlanner() {
         <AppNav dailyNutrition={dailyNutrition} />
       </div>
 
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="border-b p-4 bg-background">
+      <div className="flex-1 flex flex-col min-w-0">
+        <header className="border-b p-4 bg-background shrink-0">
           <WeekNav />
         </header>
 
-        <main className="flex flex-1 flex-col items-center overflow-auto p-6">
-          <div className="flex gap-5">
+        <main
+          className={cn(
+            "flex flex-1 flex-col items-center overflow-y-auto min-h-0",
+            "p-4 lg:p-6"
+          )}
+        >
+          <div className="flex flex-wrap justify-center gap-4 flex-shrink-0">
             <Button
-              className="bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-3 shadow-lg flex items-center gap-2 transition-transform hover:scale-105"
+              className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 sm:px-6 sm:py-3 shadow-lg flex items-center gap-2 transition-transform hover:scale-105"
               onClick={() => setDialogOpen(true)}
             >
-              <Plus className="w-5 h-5" />
+              <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
               Add New Meal
             </Button>
             <Button
-              className="bg-destructive text-primary-foreground hover:bg-destructive/90 px-6 py-3 shadow-lg flex items-center gap-2 transition-transform hover:scale-105"
+              className="bg-destructive text-primary-foreground hover:bg-destructive/90 px-4 py-2 sm:px-6 sm:py-3 shadow-lg flex items-center gap-2 transition-transform hover:scale-105"
               onClick={handleDeleteAll}
             >
-              <Trash className="w-5 h-5" />
+              <Trash className="w-4 h-4 sm:w-5 sm:h-5" />
               Delete All Meals
             </Button>
           </div>
-          <div className="mt-6 space-y-4 w-full max-w-2xl lg:max-w-3xl flex flex-col items-center">
+
+          <div className="mt-6 space-y-4 w-full max-w-2xl lg:max-w-3xl">
             <MealList meals={userMeals} />
           </div>
+          <div className="h-[500px] shrink-0 lg:h-0"></div>
         </main>
       </div>
-      <div className="flex-shrink-0">
+
+      <div className="hidden flex-shrink-0 lg:block">
         <RightSidebar />
       </div>
+
       <MealDialog
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}

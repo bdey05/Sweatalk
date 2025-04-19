@@ -147,15 +147,15 @@ const MealCard: React.FC<Meal> = ({ id, name, ingredients }) => {
   );
 
   return (
-    <Card className="w-full mb-7 border border-border dark:border-muted-foreground shadow-sm transition-shadow">
-      <CardHeader className="pb-2 flex flex-row justify-between items-center border-b border-border gap-4">
-        <div className="flex-grow mr-2">
+    <Card className="w-full mb-7 border border-border dark:border-muted-foreground shadow-sm transition-shadow overflow-hidden">
+      <CardHeader className="pb-2 flex flex-row justify-between items-center border-b border-border gap-2">
+        <div className="flex-grow mr-2 min-w-0">
           <Input
             value={mealName}
             onChange={(e) => setMealName(e.target.value)}
             onBlur={handleNameChange}
             placeholder="Meal Name"
-            className="h-9 p-5 text-lg border-2 border-border font-medium focus-visible:ring-1 focus-visible:ring-ring bg-transparent shadow-none"
+            className="h-9 px-3 py-5 text-lg border-2 border-border font-medium focus-visible:ring-1 focus-visible:ring-ring bg-transparent shadow-none"
             aria-label="Meal name"
           />
         </div>
@@ -172,7 +172,7 @@ const MealCard: React.FC<Meal> = ({ id, name, ingredients }) => {
 
       {ingredientsList.length > 0 && (
         <div className="px-6 py-3 border-b border-border dark:border-muted-foreground">
-          <div className="grid grid-cols-4 gap-2 text-center">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-center">
             <div className="bg-primary/10 rounded-lg p-2">
               <p className="text-xs text-muted-foreground">Calories</p>
               <p className="font-bold text-primary">{mealNutrition.calories}</p>
@@ -219,17 +219,15 @@ const MealCard: React.FC<Meal> = ({ id, name, ingredients }) => {
         )}
       </CardContent>
 
-      <CardFooter className="flex justify-between pt-3 pb-3 border-t border-border dark:border-muted-foreground">
-        <div className="flex space-x-2">
-          <Button
-            variant="outline"
-            className="border border-input text-muted-foreground"
-            onClick={() => setDialogOpen(true)}
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Add Ingredient
-          </Button>
-        </div>
+      <CardFooter className="flex flex-wrap justify-between items-center gap-2 pt-3 pb-3 border-t border-border dark:border-muted-foreground">
+        <Button
+          variant="outline"
+          className="border border-input text-muted-foreground"
+          onClick={() => setDialogOpen(true)}
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Add Ingredient
+        </Button>
 
         <Button
           variant="ghost"
